@@ -1,0 +1,25 @@
+OAuth:
+	Consumer Key = 1f444d14ea8ec776585524a33f6ecc1c413ed4a5
+	Consumer Secret = 20d175147f9db9a10fc0584aa128090217b9cf88
+	Type = HMAC-SHA1
+
+url = https://api.gog.com/en/downloader2/status/stable/
+{
+    "config": {
+        "get_extra_link": "https://api.gog.com/en/downloader2/extra/", 
+        "get_game_details": "https://api.gog.com/en/downloader2/game/", 
+        "get_installer_link": "https://api.gog.com/en/downloader2/installer/", 
+        "get_user_details": "https://api.gog.com/en/downloader2/user/", 
+        "get_user_games": "https://api.gog.com/en/downloader2/user_games/", 
+        "oauth_authorize_temp_token": "https://api.gog.com/en/oauth/login/", 
+        "oauth_get_temp_token": "https://api.gog.com/en/oauth/initialize/", 
+        "oauth_get_token": "https://api.gog.com/en/oauth/token/", 
+        "set_app_status": "https://api.gog.com/en/downloader2/set_app_status/"
+    }, 
+    "current_timestamp": 1337202697, 
+    "current_version": {
+        "url": "http://static.gog.com/download/d3/stable/Setup_Downloader_3.0.40.exe", 
+        "version": "3.0.40"
+    }, 
+    "status": "OK"
+}

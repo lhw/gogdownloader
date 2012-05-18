@@ -1,0 +1,3 @@
+curl -c cookies -X POST "https://secure.gog.com/en/login" -d "log_email=foo&log_password=foobar2000"
+curl -b cookies "https://secure.gog.com/account/games/list" -o index.html | div class="game_li" id="game_li_1207659037"
+https://secure.gog.com/en/account/ajax?a=gamesListDetails&g=1207659023 | <div class="list_down_browser"><a href="http://www.gog.com/en/download/game/heroes_of_might_and_magic_5_bundle/0" class="list_game_item">
