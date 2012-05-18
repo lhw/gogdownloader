@@ -177,7 +177,7 @@ int gog_installer_link(char *token, char *secret, char *game, uint8_t file_id){
 	char *req_url = NULL, *reply = NULL, *installer_link_uri;
 
 	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 4);
-	sprintf(installer_link_uri, "%s%s/%d/", config.get_game_details, game, file_id);
+	sprintf(installer_link_uri, "%s%s/%d/", config.get_installer_link , game, file_id);
 
 	req_url = oauth_sign_url2(installer_link_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
 	reply = oauth_http_get3(req_url);
@@ -205,7 +205,7 @@ int main() {
 	token = "";
 	secret = "";
 
-	//gog_game_details(token, secret, "tyrian_2000");
+	gog_game_details(token, secret, "tyrian_2000");
 	gog_installer_link(token, secret, "tyrian_2000", 0);
 	//gog_user_details(token, secret);
 }
