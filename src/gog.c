@@ -5,7 +5,7 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
     *response_ptr = strndup(buffer, (size_t)(size *nmemb));
 	 return strlen(*response_ptr);
 }
-char *oauth_http_get3(const char *url) {
+char *http_get(const char *url) {
 	CURL *curl;
 	char *reply, *error_msg;
 
@@ -33,7 +33,7 @@ int gog_request_token(char **token, char **secret) {
 	int rc;
 
 	req_url = oauth_sign_url2(config.oauth_get_temp_token, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, NULL, NULL);
-	reply = oauth_http_get3(req_url);
+	reply = http_get(req_url);
 
 	free(req_url);
 
@@ -68,7 +68,7 @@ int gog_access_token(const char *email, const char *password, const char *key, c
 	sprintf(login_uri, LOGIN_PARAM, config.oauth_authorize_temp_token, user_enc, password_enc);
 
 	req_url = oauth_sign_url2(login_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, key, secret);
-	reply = oauth_http_get3(req_url);
+	reply = http_get(req_url);
 
 	free(user_enc);
 	free(password_enc);
@@ -100,7 +100,7 @@ int gog_token(const char *auth_token, const char *auth_secret, const char *verif
 	sprintf(token_uri, TOKEN_PARAM, config.oauth_get_token, verifier);
 
 	req_url = oauth_sign_url2(token_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, auth_token, auth_secret);
-	reply = oauth_http_get3(req_url);
+	reply = http_get(req_url);
 
 	free(token_uri);
 	free(req_url);
@@ -152,7 +152,7 @@ int gog_game_details(char *token, char *secret, char *game) {
 	sprintf(game_details_uri, "%s%s/", config.get_game_details, game);
 
 	req_url = oauth_sign_url2(game_details_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
-	reply = oauth_http_get3(req_url);
+	reply = http_get(req_url);
 	puts(reply);
 
 	free(game_details_uri);
@@ -165,7 +165,7 @@ int gog_user_details(char *token, char *secret) {
 	char *req_url = NULL, *reply = NULL, *game_details_uri;
 
 	req_url = oauth_sign_url2(config.get_user_details, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
-	reply = oauth_http_get3(req_url);
+	reply = http_get(req_url);
 	puts(reply);
 
 	free(req_url);
@@ -180,32 +180,64 @@ int gog_installer_link(char *token, char *secret, char *game, uint8_t file_id){
 	sprintf(installer_link_uri, "%s%s/%d/", config.get_installer_link , game, file_id);
 
 	req_url = oauth_sign_url2(installer_link_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
-	reply = oauth_http_get3(req_url);
+	reply = http_get(req_url);
 	puts(reply);
 
 	free(installer_link_uri);
 	free(req_url);
 	free(reply);
 
+	return 0;
+}
+int gog_user_games(char *token, char *secret) {
+	char *req_url = NULL, *reply = NULL;
+
+	req_url = oauth_sign_url2(config.get_user_games, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
+	//reply = http_get(req_url);
+	puts(req_url);
+
+	return 0;
+}
+int gog_download_config(char *release) {
+	char *release_url, *reply, *tmp; 
+	struct json_object *content;
+
+	release_url = malloc(strlen(CONFIG_URL) - 2 + strlen(release));
+	sprintf(release_url, CONFIG_URL, release);
+	reply = http_get(release_url);
+
+	content = json_tokener_parse(reply);
+	content = json_object_object_get(content, "config");
+	
+	config.get_extra_link = strdup(json_object_get_string(json_object_object_get(content, "get_extra_link")));
+	config.get_game_details = strdup(json_object_get_string(json_object_object_get(content, "get_game_details")));
+	config.get_installer_link = strdup(json_object_get_string(json_object_object_get(content, "get_installer_link")));
+	config.get_user_details = strdup(json_object_get_string(json_object_object_get(content, "get_user_details")));
+	config.get_user_games = strdup(json_object_get_string(json_object_object_get(content, "get_user_games")));
+	config.oauth_authorize_temp_token = strdup(json_object_get_string(json_object_object_get(content, "oauth_authorize_temp_token")));
+	config.oauth_get_temp_token = strdup(json_object_get_string(json_object_object_get(content, "oauth_get_temp_token")));
+	config.oauth_get_token = strdup(json_object_get_string(json_object_object_get(content, "oauth_get_token")));
+	config.set_app_status = strdup(json_object_get_string(json_object_object_get(content, "set_app_status")));
+
+	json_object_put(content);
+
+	free(reply);
+	free(release_url);
 }
 int main() {
 	char *token = NULL, *secret = NULL;
 
 	curl_global_init(CURL_GLOBAL_SSL);
 
-	config.oauth_get_temp_token = "https://api.gog.com/en/oauth/initialize/";
-	config.oauth_authorize_temp_token = "https://api.gog.com/en/oauth/login/";
-	config.oauth_get_token = "https://api.gog.com/en/oauth/token/";
-	config.get_game_details = "https://api.gog.com/en/downloader2/game/";
-	config.get_user_details = "https://api.gog.com/en/downloader2/user/";
-	config.get_installer_link = "https://api.gog.com/en/downloader2/installer/";
+	gog_download_config(DEFAULT_RELEASE);
 
 	/*if(gog_login("foo@bar.com", "foobar2000", &token, &secret))
 		printf("Token: %s\nSecret: %s\n", token, secret);*/
-	token = "";
-	secret = "";
+	token = "3f4a856709f0eefee38ef0fde5104f514a768a6e";
+	secret = "0b48035c22968d099f0ddc6b8856ef67f55a835a";
 
-	gog_game_details(token, secret, "tyrian_2000");
-	gog_installer_link(token, secret, "tyrian_2000", 0);
+	gog_user_games(token, secret);
+	//gog_game_details(token, secret, "tyrian_2000");
+	//gog_installer_link(token, secret, "tyrian_2000", 0);
 	//gog_user_details(token, secret);
 }
