@@ -200,25 +200,26 @@ int gog_user_games(char *token, char *secret) {
 }
 int gog_download_config(char *release) {
 	char *release_url, *reply, *tmp; 
-	struct json_object *content;
+	struct json_object *content, *config_node;
 
 	release_url = malloc(strlen(CONFIG_URL) - 2 + strlen(release));
 	sprintf(release_url, CONFIG_URL, release);
 	reply = http_get(release_url);
 
 	content = json_tokener_parse(reply);
-	content = json_object_object_get(content, "config");
+	config_node = json_object_object_get(content, "config");
 	
-	config.get_extra_link = strdup(json_object_get_string(json_object_object_get(content, "get_extra_link")));
-	config.get_game_details = strdup(json_object_get_string(json_object_object_get(content, "get_game_details")));
-	config.get_installer_link = strdup(json_object_get_string(json_object_object_get(content, "get_installer_link")));
-	config.get_user_details = strdup(json_object_get_string(json_object_object_get(content, "get_user_details")));
-	config.get_user_games = strdup(json_object_get_string(json_object_object_get(content, "get_user_games")));
-	config.oauth_authorize_temp_token = strdup(json_object_get_string(json_object_object_get(content, "oauth_authorize_temp_token")));
-	config.oauth_get_temp_token = strdup(json_object_get_string(json_object_object_get(content, "oauth_get_temp_token")));
-	config.oauth_get_token = strdup(json_object_get_string(json_object_object_get(content, "oauth_get_token")));
-	config.set_app_status = strdup(json_object_get_string(json_object_object_get(content, "set_app_status")));
+	config.get_extra_link = strdup(json_object_get_string(json_object_object_get(config_node, "get_extra_link")));
+	config.get_game_details = strdup(json_object_get_string(json_object_object_get(config_node, "get_game_details")));
+	config.get_installer_link = strdup(json_object_get_string(json_object_object_get(config_node, "get_installer_link")));
+	config.get_user_details = strdup(json_object_get_string(json_object_object_get(config_node, "get_user_details")));
+	config.get_user_games = strdup(json_object_get_string(json_object_object_get(config_node, "get_user_games")));
+	config.oauth_authorize_temp_token = strdup(json_object_get_string(json_object_object_get(config_node, "oauth_authorize_temp_token")));
+	config.oauth_get_temp_token = strdup(json_object_get_string(json_object_object_get(config_node, "oauth_get_temp_token")));
+	config.oauth_get_token = strdup(json_object_get_string(json_object_object_get(config_node, "oauth_get_token")));
+	config.set_app_status = strdup(json_object_get_string(json_object_object_get(config_node, "set_app_status")));
 
+	json_object_put(config_node);
 	json_object_put(content);
 
 	free(reply);
