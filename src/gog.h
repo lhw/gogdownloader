@@ -13,8 +13,8 @@
 #define CONSUMER_SECRET "20d175147f9db9a10fc0584aa128090217b9cf88"
 
 #define KEY_LENGTH 40
-#define LOGIN_PARAM "%s?username=%s&password=%s\0"
-#define TOKEN_PARAM "%s?oauth_verifier=%s\0"
+#define LOGIN_PARAM "%s?username=%s&password=%s"
+#define TOKEN_PARAM "%s?oauth_verifier=%s"
 #define CONFIG_URL "https://api.gog.com/en/downloader2/status/%s/"
 #define DEFAULT_RELEASE "stable"
 
