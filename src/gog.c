@@ -19,11 +19,12 @@ int http_get(const char *url, char **buffer, char **error_msg) {
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 
-	if((res = curl_easy_perform(curl)) != 0)
+	if((res = curl_easy_perform(curl)) != 0 && error_msg != NULL)
 		*error_msg = strdup(error);
 	if(!*buffer) {
 		res = 1;
-		*error_msg = "Failed for unknown reason";
+		if(error_msg != NULL)
+			*error_msg = "Failed for unknown reason";
 	}
 
 	curl_easy_reset(curl);
