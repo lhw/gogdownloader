@@ -144,7 +144,7 @@ cleanup:
 
 	return *user_token != NULL;
 }
-int gog_game_details(char *token, char *secret, char *game, char **error) {
+int gog_game_details(const char *token, const char *secret, const char *game, char **error) {
 	char *req_url = NULL, *reply = NULL, *game_details_uri = NULL;
 	int res;
 
@@ -163,7 +163,7 @@ int gog_game_details(char *token, char *secret, char *game, char **error) {
 
 	return 0;
 }
-int gog_user_details(char *token, char *secret, char **error) {
+int gog_user_details(const char *token, const char *secret, char **error) {
 	char *req_url = NULL, *reply = NULL;
 	int res;
 
@@ -179,7 +179,7 @@ int gog_user_details(char *token, char *secret, char **error) {
 
 	return res;
 }
-int gog_extra_link(char *token, char *secret, char *game, short file_id, char **error) {
+int gog_extra_link(const char *token, const char *secret, const char *game, const short file_id, char **error) {
 	char *req_url = NULL, *reply = NULL, *extra_link_uri = NULL;
 	int res;
 
@@ -198,7 +198,7 @@ int gog_extra_link(char *token, char *secret, char *game, short file_id, char **
 
 	return res;
 }
-int gog_installer_link(char *token, char *secret, char *game, short file_id, char **error){
+int gog_installer_link(const char *token, const char *secret, const char *game, const short file_id, char **error){
 	char *req_url = NULL, *reply = NULL, *installer_link_uri = NULL;
 	int res;
 
@@ -217,7 +217,7 @@ int gog_installer_link(char *token, char *secret, char *game, short file_id, cha
 
 	return res;
 }
-int gog_user_games(char *token, char *secret, char **error) {
+int gog_user_games(const char *token, const char *secret, char **error) {
 	char *req_url = NULL, *reply = NULL;
 	int res;
 
@@ -228,7 +228,7 @@ int gog_user_games(char *token, char *secret, char **error) {
 
 	return 0;
 }
-int gog_download_config(char *release, char **error) {
+int gog_download_config(const char *release, char **error) {
 	char *release_url = NULL, *reply = NULL;
 	struct json_object *content, *config_node;
 	int res;
