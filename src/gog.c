@@ -10,7 +10,7 @@ char *http_get(const char *url) {
 	char *reply, *error_msg;
 
 	curl = curl_easy_init();
-	error_msg = malloc(1000);
+	error_msg = malloc(100);
 
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_msg); 
 	curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
@@ -24,7 +24,7 @@ char *http_get(const char *url) {
 	}
 
 	free(error_msg);
-	curl_easy_cleanup(curl);
+	curl_easy_reset(curl);
 
 	return reply;
 }
@@ -173,7 +173,23 @@ int gog_user_details(char *token, char *secret) {
 
 	return 0;
 }
-int gog_installer_link(char *token, char *secret, char *game, uint8_t file_id){
+int gog_extra_link(char *token, char *secret, char *game, short file_id) {
+	char *req_url = NULL, *reply = NULL, *extra_link_uri;
+
+	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 4);
+	sprintf(extra_link_uri, "%s%s/%d/", config.get_extra_link , game, file_id);
+
+	req_url = oauth_sign_url2(extra_link_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
+	reply = http_get(req_url);
+	puts(reply);
+
+	free(extra_link_uri);
+	free(req_url);
+	free(reply);
+
+	return 0;
+}
+int gog_installer_link(char *token, char *secret, char *game, short file_id){
 	char *req_url = NULL, *reply = NULL, *installer_link_uri;
 
 	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 4);
@@ -243,8 +259,9 @@ int main() {
 	token = "3f4a856709f0eefee38ef0fde5104f514a768a6e";
 	secret = "0b48035c22968d099f0ddc6b8856ef67f55a835a";
 
-	gog_user_games(token, secret);
+	//gog_user_games(token, secret);
 	//gog_game_details(token, secret, "tyrian_2000");
 	//gog_installer_link(token, secret, "tyrian_2000", 0);
+	gog_extra_link(token, secret, "tyrian_2000", 968);
 	//gog_user_details(token, secret);
 }

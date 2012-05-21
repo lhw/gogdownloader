@@ -4,7 +4,6 @@
 #include<string.h>
 #include<stdio.h>
 #include<stdlib.h>
-#include<inttypes.h>
 #include<oauth.h>
 #include<curl/curl.h>
 #include<json/json.h>
@@ -40,7 +39,8 @@ int gog_token(const char *auth_token, const char *auth_secret, const char *verif
 int gog_login(const char *email, const char *password, char **token, char **secret);
 int gog_game_details(char *token, char *secret, char *game);
 int gog_user_details(char *token, char *secret);
-int gog_installer_link(char *token, char *secret, char *game, uint8_t file_id);
+int gog_installer_link(char *token, char *secret, char *game, short file_id);
+int gog_extra_link(char *token, char *secret, char *game, short file_id);
 int gog_user_games(char *token, char *secret);
 int gog_download_config(char *release);
 
