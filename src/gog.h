@@ -32,16 +32,16 @@ struct config_t {
 CURL *curl;
 
 size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
-char *http_get(const char *url);
-int gog_request_token(char **token, char **secret);
-int gog_access_token(const char *email, const char *password, const char *key, const char *secret, char **verifier);
-int gog_token(const char *auth_token, const char *auth_secret, const char *verifier, char **token, char **secret);
-int gog_login(const char *email, const char *password, char **token, char **secret);
-int gog_game_details(char *token, char *secret, char *game);
-int gog_user_details(char *token, char *secret);
-int gog_installer_link(char *token, char *secret, char *game, short file_id);
-int gog_extra_link(char *token, char *secret, char *game, short file_id);
-int gog_user_games(char *token, char *secret);
-int gog_download_config(char *release);
+int http_get(const char *url, char **buffer, char **error_msg);
+int gog_request_token(char **token, char **secret, char **error);
+int gog_access_token(const char *email, const char *password, const char *key, const char *secret, char **verifier, char **error);
+int gog_token(const char *auth_token, const char *auth_secret, const char *verifier, char **token, char **secret, char **error);
+int gog_login(const char *email, const char *password, char **token, char **secret, char **error);
+int gog_game_details(char *token, char *secret, char *game, char **error);
+int gog_user_details(char *token, char *secret, char **error);
+int gog_installer_link(char *token, char *secret, char *game, short file_id, char **error);
+int gog_extra_link(char *token, char *secret, char *game, short file_id, char **error);
+int gog_user_games(char *token, char *secret, char **error);
+int gog_download_config(char *release, char **error);
 
 #endif
