@@ -8,21 +8,26 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
 int http_get(const char *url, char **buffer, char **error_msg) {
 	CURL *curl;
 	CURLcode res;
+	char *error;
 
 	curl = curl_easy_init();
-	*error_msg = malloc(192);
+	error = malloc(1000);
 
-	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, error_msg); 
+	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, &error); 
 	curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 
-	if((res = curl_easy_perform(curl)) == 0)
-		free(*error_msg);
-	else
-		*error_msg = realloc(*error_msg, strlen(*error_msg));
+	if((res = curl_easy_perform(curl)) != 0)
+		*error_msg = strdup(error);
+	if(!*buffer) {
+		res = 1;
+		*error_msg = "Failed for unknown reason";
+	}
+
 	curl_easy_reset(curl);
+	free(error);
 
 	return res == 0 ? 1 : 0;
 }
@@ -262,7 +267,7 @@ int main() {
 
 	gog_download_config(DEFAULT_RELEASE, &error);
 
-	/*if(gog_login("foo@bar.com", "foobar2000", &token, &secret))
+	/*if(gog_login("foo@bar.com", "foobar2000", &token, &secret, &error))
 		printf("Token: %s\nSecret: %s\n", token, secret);*/
 	token = "3f4a856709f0eefee38ef0fde5104f514a768a6e";
 	secret = "0b48035c22968d099f0ddc6b8856ef67f55a835a";
@@ -270,6 +275,9 @@ int main() {
 	//gog_user_games(token, secret, &error);
 	//gog_game_details(token, secret, "tyrian_2000", &error);
 	//gog_installer_link(token, secret, "tyrian_2000", 0, &error);
-	gog_extra_link(token, secret, "tyrian_2000", 968, &error);
+	gog_extra_link(token, secret, "tyrian_2000", 967, &error); //WORKING
+	if(!gog_extra_link(token, secret, "tyrian_2000", 967, &error)) { //NOT EXISTANT
+		puts(error);
+	}
 	//gog_user_details(token, secret, &error);
 }
