@@ -269,10 +269,9 @@ int gog_installer_crc(const char *token, const char *secret, const char *game, c
 	sprintf(file_crc_uri, "%s%s/%d/crc/", config.get_installer_link , game, file_id);
 
 	req_url = oauth_sign_url2(file_crc_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
-	/*if((res = http_get(req_url, &reply, error))) {
+	if((res = http_get(req_url, &reply, error))) {
 		puts(reply);
-	}*/
-	puts(req_url);
+	}
 
 	free(file_crc_uri);
 	free(req_url);
@@ -294,11 +293,12 @@ int main() {
 	secret = "0b48035c22968d099f0ddc6b8856ef67f55a835a";
 
 	//gog_user_games(token, secret, &error);
-	//gog_game_details(token, secret, "tyrian_2000", &error);
-	//gog_installer_link(token, secret, "tyrian_2000", 0, &error);
-	gog_extra_link(token, secret, "tyrian_2000", 967, &error); //WORKING
-	if(!gog_extra_link(token, secret, "tyrian_2000", 967, &error)) { //NOT EXISTANT
+	gog_game_details(token, secret, "beneath_a_steel_sky", &error);
+	gog_installer_link(token, secret, "beneath_a_steel_sky", 0, &error);
+	gog_installer_crc(token, secret, "beneath_a_steel_sky", 0, &error);
+	//gog_extra_link(token, secret, "tyrian_2000", 967, &error); //WORKING
+	/*if(!gog_extra_link(token, secret, "tyrian_2000", 967, &error)) { //NOT EXISTANT
 		puts(error);
-	}
+	}*/
 	//gog_user_details(token, secret, &error);
 }
