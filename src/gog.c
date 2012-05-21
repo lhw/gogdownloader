@@ -261,6 +261,26 @@ int gog_download_config(const char *release, char **error) {
 
 	return res;
 }
+int gog_installer_crc(const char *token, const char *secret, const char *game, const short file_id, char **error) {
+	char *req_url = NULL, *reply = NULL, *file_crc_uri = NULL;
+	int res;
+
+	file_crc_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 8);
+	sprintf(file_crc_uri, "%s%s/%d/crc/", config.get_installer_link , game, file_id);
+
+	req_url = oauth_sign_url2(file_crc_uri, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, token, secret);
+	/*if((res = http_get(req_url, &reply, error))) {
+		puts(reply);
+	}*/
+	puts(req_url);
+
+	free(file_crc_uri);
+	free(req_url);
+	if(reply)
+		free(reply);
+
+	return res;
+}
 int main() {
 	char *token = NULL, *secret = NULL, *error;
 

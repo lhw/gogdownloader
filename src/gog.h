@@ -45,6 +45,7 @@ int gog_user_games(const char *token, const char *secret, char **error);
 int gog_game_details(const char *token, const char *secret, const char *game, char **error);
 int gog_user_details(const char *token, const char *secret, char **error);
 int gog_installer_link(const char *token, const char *secret, const char *game, const short file_id, char **error);
+int gog_installer_crc(const char *token, const char *secret, const char *game, const short file_id, char **error);
 int gog_extra_link(const char *token, const char *secret, const char *game, const short file_id, char **error);
 
 #endif
