@@ -29,23 +29,32 @@ struct config_t {
 	char *set_app_status;
 } config;
 
+struct oauth_t {
+	char *token;
+	char *secret;
+	char *error;
+
+	/* only used during login process */
+	char *verifier;
+};
+
 CURL *curl;
 
 size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
 int http_get(const char *url, char **buffer, char **error_msg);
 
-int gog_download_config(const char *release, char **error);
+int gog_download_config(struct oauth_t *oauth, const char *release);
 
-int gog_request_token(char **token, char **secret, char **error);
-int gog_access_token(const char *email, const char *password, const char *key, const char *secret, char **verifier, char **error);
-int gog_token(const char *auth_token, const char *auth_secret, const char *verifier, char **token, char **secret, char **error);
-int gog_login(const char *email, const char *password, char **token, char **secret, char **error);
+int gog_request_token(struct oauth_t *oauth);
+int gog_access_token(struct oauth_t *oauth, const char *email, const char *password);
+int gog_token(struct oauth_t *oauth);
+int gog_login(struct oauth_t *oauth, const char *email, const char *password);
 
-int gog_user_games(const char *token, const char *secret, char **error);
-int gog_game_details(const char *token, const char *secret, const char *game, char **error);
-int gog_user_details(const char *token, const char *secret, char **error);
-int gog_installer_link(const char *token, const char *secret, const char *game, const short file_id, char **error);
-int gog_installer_crc(const char *token, const char *secret, const char *game, const short file_id, char **error);
-int gog_extra_link(const char *token, const char *secret, const char *game, const short file_id, char **error);
+int gog_user_games(struct oauth_t *oauth);
+int gog_game_details(struct oauth_t *oauth, const char *game);
+int gog_user_details(struct oauth_t *oauth);
+int gog_installer_link(struct oauth_t *oauth, const char *game, const short file_id);
+int gog_installer_crc(struct oauth_t *oauth, const char *game, const short file_id);
+int gog_extra_link(struct oauth_t *oauth, const char *game, const short file_id);
 
 #endif
