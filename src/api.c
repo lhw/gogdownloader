@@ -108,9 +108,10 @@ int gog_login(struct oauth_t *oauth, const char *email, const char *password) {
 	return 1;
 }
 int gog_game_details(struct oauth_t *oauth, const char *game) {
-	char *reply = NULL, *game_details_uri = NULL, *size = NULL;
-	int res, len;
+	char *reply = NULL, *game_details_uri = NULL;
+	int res;
 	struct json_object *answer, *obj;
+	struct array_list *list;
 
 	game_details_uri = malloc(strlen(config.get_game_details) + strlen(game) + 2);
 	sprintf(game_details_uri, "%s%s/", config.get_game_details, game);
@@ -125,42 +126,12 @@ int gog_game_details(struct oauth_t *oauth, const char *game) {
 
 		msg->content.game->icon = strdup(json_object_get_string(json_object_object_get(obj, "icon")));
 
-		struct array_list *list = json_object_get_array(json_object_object_get(obj, "extras"));
-		if((len = array_list_length(list)) > 0) {
-			struct file_t **extras = msg->content.game->extras;
-			extras = malloc(len * sizeof(struct file_t));
-			for(int i = 0; i < len; i++) {
-				struct json_object *item = (struct json_object *)array_list_get_idx(list, i);
-				extras[i]->id = json_object_get_int(json_object_object_get(item, "id"));
-				extras[i]->name = strdup(json_object_get_string(json_object_object_get(item, "name")));
-				extras[i]->path = strdup(json_object_get_string(json_object_object_get(item, "path")));
+		list = json_object_get_array(json_object_object_get(obj, "extras"));
+		extract_files(list, msg->content.game->extras);
 
-				size = strdup(json_object_get_string(json_object_object_get(item, "size")));
-				char *comma = strchr(size, ',');
-				*comma = '.';
-				sscanf(size, "%f", &(extras[i]->size));
-
-				json_object_put(item);
-			}
-		}
 		list = json_object_get_array(json_object_object_get(obj, "installers"));
-		if((len = array_list_length(list)) > 0) {
-			struct file_t **installers = msg->content.game->installers;
-			installers = malloc(len * sizeof(struct file_t));
-			for(int i = 0; i < len; i++) {
-				struct json_object *item = (struct json_object *)array_list_get_idx(list, i);
-				installers[i]->id = json_object_get_int(json_object_object_get(item, "id"));
-				installers[i]->path = strdup(json_object_get_string(json_object_object_get(item, "path")));
+		extract_files(list, msg->content.game->installers);
 
-				size = strdup(json_object_get_string(json_object_object_get(item, "size")));
-				char *comma = strchr(size, ',');
-				*comma = '.';
-				sscanf(size, "%f", &(installers[i]->size));
-
-				json_object_put(item);
-
-			}
-		}
 		array_list_free(list);
 
 		json_object_put(obj);
