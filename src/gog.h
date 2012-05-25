@@ -29,15 +29,6 @@ struct config_t {
 	char *set_app_status;
 } config;
 
-struct oauth_t {
-	char *token;
-	char *secret;
-	char *error;
-
-	/* only used during login process */
-	char *verifier;
-};
-
 struct file_t {
 	int id;
 	char *name;
@@ -73,12 +64,24 @@ struct message_t {
 	int result;
 	int timestamp;
 
-	union msg {
+	union type {
 		struct download_t download;
 		struct game_details_t game;
 		struct user_details_t user;
 	};
 };
+
+struct oauth_t {
+	char *token;
+	char *secret;
+	char *error;
+
+	struct message_t *msg;
+
+	/* only used during login process */
+	char *verifier;
+};
+
 
 CURL *curl;
 
