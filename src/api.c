@@ -19,6 +19,10 @@ int gog_request_token(struct oauth_t *oauth) {
 
 			return 1;
 		}
+		else {
+			oauth->error = reply;
+			res = 0;
+		}
 	}
 	if(reply)
 		free(reply);
@@ -49,6 +53,10 @@ int gog_access_token(struct oauth_t *oauth, const char *email, const char *passw
 
 			return 1;
 		}
+		else {
+			oauth->error = reply;
+			res = 0;
+		}
 	}
 	free(login_uri);
 	if(reply)
@@ -74,6 +82,10 @@ int gog_token(struct oauth_t *oauth) {
 			free(oauth->verifier);
 
 			return 1;
+		}
+		else {
+			oauth->error = reply;
+			res = 0;
 		}
 	}
 	free(token_uri);
