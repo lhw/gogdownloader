@@ -23,3 +23,100 @@ url = https://api.gog.com/en/downloader2/status/stable/
     }, 
     "status": "OK"
 }
+
+user_details:
+{
+    "result": "ok", 
+    "status": "IGNORE. Same as above", 
+    "timestamp": 1337942119, 
+    "user": {
+        "avatar": {
+            "big": "", 
+            "small": "http://static.gog.com/www/default/-img/newuser_small.png"
+        }, 
+        "email": "foo@foo.bar", 
+        "id": "123456789012", 
+        "notifications": {
+            "forum": 0, 
+            "games": "0", 
+            "messages": 0
+        }, 
+        "xywka": "NAME"
+    }
+}
+
+game_details:
+{
+    "game": {
+        "extras": [
+            {
+                "id": "240", 
+                "name": "manual (15 pages)", 
+                "path": "/beneath_a_steel_sky/extras/bass_manual.zip", 
+                "size_mb": "1"
+            }, 
+            {
+                "id": "238", 
+                "name": "HD wallpapers", 
+                "path": "/beneath_a_steel_sky/extras/bass_wallpapers.zip", 
+                "size_mb": "5"
+            }, 
+            {
+                "id": "237", 
+                "name": "avatars", 
+                "path": "/beneath_a_steel_sky/extras/bass_avatars.zip", 
+                "size_mb": "1"
+            }, 
+            {
+                "id": "239", 
+                "name": "comic book", 
+                "path": "/beneath_a_steel_sky/extras/bass_comic_book.zip", 
+                "size_mb": "12"
+            }
+        ], 
+        "icon": "/upload/images/2008/11/56aebdac6283fd249fd5dfa569ae5668fbf15ba6.jpg", 
+        "installers": [
+            {
+                "id": 0, 
+                "path": "/beneath_a_steel_sky/setup_beneath_a_steel_sky.exe", 
+                "size_mb": "71,6"
+            }
+        ], 
+        "title": "Beneath a Steel Sky"
+    }, 
+    "result": "ok", 
+    "timestamp": 1337942120
+}
+
+installer_links:
+{
+    "file": {
+        "available": 1, 
+        "link": "LONG SESSION URL", 
+        "message": ""
+    }, 
+    "result": "ok", 
+    "timestamp": 1337942120
+}
+installer_crc:
+{
+    "file": {
+        "available": 1, 
+        "link": "LONG SESSION URL TO XML", 
+        "message": ""
+    }, 
+    "result": "ok", 
+    "timestamp": 1337942120
+}
+extra_links:
+{
+    "file": {
+        "available": 1, 
+        "link": "LONG SESSION URL", 
+        "message": "", 
+        "name": "NAME", 
+        "type": "TYPE (enum?)"
+    }, 
+    "result": "ok", 
+    "timestamp": 1337942121
+}
