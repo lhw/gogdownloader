@@ -129,7 +129,7 @@ int gog_extra_link(struct oauth_t *oauth, const char *game, const short file_id)
 	char *reply = NULL, *extra_link_uri = NULL;
 	int res;
 
-	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 4);
+	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 7);
 	sprintf(extra_link_uri, "%s%s/%d/", config.get_extra_link , game, file_id);
 
 	if((res = http_get_oauth(oauth, extra_link_uri, &reply))) {
@@ -146,7 +146,7 @@ int gog_installer_link(struct oauth_t *oauth, const char *game, const short file
 	char *reply = NULL, *installer_link_uri = NULL;
 	int res;
 
-	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 4);
+	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 7);
 	sprintf(installer_link_uri, "%s%s/%d/", config.get_installer_link , game, file_id);
 
 	if((res = http_get_oauth(oauth, installer_link_uri, &reply))) {
