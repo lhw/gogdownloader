@@ -36,17 +36,17 @@ struct file_t {
 	float size;
 };
 struct game_details_t {
-	struct download_t	**extras;
-	struct download_t **installers;
+	struct file_t	**extras;
+	struct file_t **installers;
 	char *title;
 	char *icon;
 };
 
 struct user_details_t {
-	union avatar {
+	union avatar_t {
 		char *big;
 		char *small;
-	};
+	} avatar;
 	char *email;
 	int id;
 	char *nick;
@@ -64,11 +64,11 @@ struct message_t {
 	int result;
 	int timestamp;
 
-	union type {
-		struct download_t download;
-		struct game_details_t game;
-		struct user_details_t user;
-	};
+	union content_u {
+		struct download_t *download;
+		struct game_details_t *game;
+		struct user_details_t *user;
+	} content;
 };
 
 struct oauth_t {
@@ -89,6 +89,7 @@ CURL *curl;
 size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
 int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
+struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
 
 /* api.c */
 int gog_download_config(struct oauth_t *oauth, const char *release);

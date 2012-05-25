@@ -46,3 +46,18 @@ int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer) {
 	free(req_url);
 	return res;
 }
+struct message_t *setup_handler(struct oauth_t *oauth, char *reply) {
+	struct json_object *answer;
+
+	if(oauth->msg != NULL)
+		free(oauth->msg);
+	oauth->msg = malloc(sizeof(struct message_t));
+
+	answer = json_tokener_parse(reply);
+	oauth->msg->result = strcmp(json_object_get_string(json_object_object_get(answer, "result")), "ok") == 0 ? 1 : 0;
+	oauth->msg->timestamp = json_object_get_int(json_object_object_get(answer, "timestamp"));
+
+	json_object_put(answer);
+
+	return oauth->msg;
+}
