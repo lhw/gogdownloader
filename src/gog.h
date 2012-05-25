@@ -42,6 +42,7 @@ CURL *curl;
 
 size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
 int http_get(const char *url, char **buffer, char **error_msg);
+int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
 
 int gog_download_config(struct oauth_t *oauth, const char *release);
 
