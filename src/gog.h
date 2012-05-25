@@ -38,6 +38,48 @@ struct oauth_t {
 	char *verifier;
 };
 
+struct file_t {
+	int id;
+	char *name;
+	char *path;
+	float size;
+};
+struct game_details_t {
+	struct download_t	**extras;
+	struct download_t **installers;
+	char *title;
+	char *icon;
+};
+
+struct user_details_t {
+	union avatar {
+		char *big;
+		char *small;
+	};
+	char *email;
+	int id;
+	char *nick;
+};
+
+struct download_t {
+	int available;
+	char *link;
+	char *message;
+	char *name;
+	char *type;
+};
+
+struct message_t {
+	int result;
+	int timestamp;
+
+	union msg {
+		struct download_t download;
+		struct game_details_t game;
+		struct user_details_t user;
+	};
+};
+
 CURL *curl;
 
 /* http.c */
