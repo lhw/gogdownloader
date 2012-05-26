@@ -135,6 +135,10 @@ int gog_game_details(struct oauth_t *oauth, const char *game) {
 			msg->game.installers_count = extract_files(list, &(msg->game.installers));
 			array_list_free(list);
 
+			/* crashes - but shouldn't
+			json_object_put(obj);
+			json_object_put(answer);*/
+
 			free(game_details_uri);
 			free(reply);
 
