@@ -10,10 +10,10 @@ int main() {
 
 	gog_download_config(oauth, DEFAULT_RELEASE);
 
-	/*if(gog_login(oauth, "foo@foo.bar", "foobar2000"))
+	/*if(gog_login(oauth, USERNAME, PASSWORD))
 		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);*/
 	oauth->token = TOKEN; 
-	oauth->secret = SECRET; 
+	oauth->secret = SECRET;
 
 	gog_game_details(oauth, "beneath_a_steel_sky");
 	/*

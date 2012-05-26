@@ -60,9 +60,16 @@ struct download_t {
 	char *type;
 };
 
+enum type_t {
+	DOWNLOAD,
+	GAME,
+	USER
+};
+
 struct message_t {
 	int result;
 	int timestamp;
+	enum type_t type;
 
 	union content_u {
 		struct download_t *download;

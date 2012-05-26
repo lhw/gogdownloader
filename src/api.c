@@ -133,9 +133,6 @@ int gog_game_details(struct oauth_t *oauth, const char *game) {
 		extract_files(list, msg->content.game->installers);
 
 		array_list_free(list);
-
-		json_object_put(obj);
-		json_object_put(answer);
 	}
 
 	free(game_details_uri);

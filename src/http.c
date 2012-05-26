@@ -67,21 +67,21 @@ int extract_files(struct array_list *list, struct file_t **out) {
 	char *size;
 
 	if((len = array_list_length(list)) > 0) {
-		out = malloc(len * sizeof(struct file_t));
+		*out = calloc(sizeof(struct file_t), len);
 		for(int i = 0; i < len; i++) {
 			item = (struct json_object *)array_list_get_idx(list, i);
-			out[i]->id = json_object_get_int(json_object_object_get(item, "id"));
-			out[i]->path = strdup(json_object_get_string(json_object_object_get(item, "path")));
+			(*out)[i].id = json_object_get_int(json_object_object_get(item, "id"));
+			(*out)[i].path = strdup(json_object_get_string(json_object_object_get(item, "path")));
 
 			name = json_object_object_get(item, "name");
 			if(name != NULL)
-				out[i]->name = strdup(json_object_get_string(name));
+				(*out)[i].name = strdup(json_object_get_string(name));
 
 			size = strdup(json_object_get_string(json_object_object_get(item, "size_mb")));
 			char *comma = strchr(size, ',');
 			if(comma != NULL)
 				*comma = '.';
-			out[i]->size = strtof(size, NULL);
+			(*out)[i].size = strtof(size, NULL);
 
 		}
 		return len;
