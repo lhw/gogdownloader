@@ -15,10 +15,11 @@ int main() {
 	oauth->token = TOKEN; 
 	oauth->secret = SECRET;
 
-	gog_user_details(oauth);
+	gog_game_details(oauth, "beneath_a_steel_sky");
+	printf("%d: %s\n", oauth->msg->game.installers[0].id, oauth->msg->game.installers[0].path);
 	free_message(oauth->msg);
 	/*
-	gog_game_details(oauth, "beneath_a_steel_sky");
+	gog_user_details(oauth);
 	gog_user_games(oauth);
 	gog_installer_link(oauth, "beneath_a_steel_sky", 0);
 	gog_installer_crc(oauth, "beneath_a_steel_sky", 0);
