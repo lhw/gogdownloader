@@ -119,20 +119,27 @@ int gog_game_details(struct oauth_t *oauth, const char *game) {
 	if((res = http_get_oauth(oauth, game_details_uri, &reply))) {
 		struct message_t *msg = setup_handler(oauth, reply);
 
-		msg->content.game = (struct game_details_t *)malloc(sizeof(struct game_details_t));
+		if(msg->result) {
+			msg->type = GAME;
 
-		answer = json_tokener_parse(reply);
-		obj = json_object_object_get(answer, "game");
+			answer = json_tokener_parse(reply);
+			obj = json_object_object_get(answer, "game");
 
-		msg->content.game->icon = strdup(json_object_get_string(json_object_object_get(obj, "icon")));
+			msg->game.icon = strdup(json_object_get_string(json_object_object_get(obj, "icon")));
 
-		list = json_object_get_array(json_object_object_get(obj, "extras"));
-		extract_files(list, msg->content.game->extras);
+			list = json_object_get_array(json_object_object_get(obj, "extras"));
+			msg->game.extras_count = extract_files(list, &(msg->game.extras));
 
-		list = json_object_get_array(json_object_object_get(obj, "installers"));
-		extract_files(list, msg->content.game->installers);
+			list = json_object_get_array(json_object_object_get(obj, "installers"));
+			msg->game.installers_count = extract_files(list, &(msg->game.installers));
 
-		array_list_free(list);
+			array_list_free(list);
+
+			free(game_details_uri);
+			free(reply);
+
+			return 1;
+		}
 	}
 
 	free(game_details_uri);
@@ -143,10 +150,19 @@ int gog_game_details(struct oauth_t *oauth, const char *game) {
 }
 int gog_user_details(struct oauth_t *oauth) {
 	char *req_url = NULL, *reply = NULL;
+	struct json_object *answer, *obj;
 	int res;
 
 	if((res = http_get_oauth(oauth, config.get_user_details, &reply))) {
-		puts(reply);
+		struct message_t *msg = setup_handler(oauth, reply);
+
+		if(msg->result) {
+			msg->type = USER;
+
+			answer = json_tokener_parse(reply);
+			obj = json_object_object_get(answer, "user");
+
+		}
 	}
 
 	if(reply)

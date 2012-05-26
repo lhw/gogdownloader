@@ -36,8 +36,10 @@ struct file_t {
 	float size;
 };
 struct game_details_t {
-	struct file_t	**extras;
-	struct file_t **installers;
+	struct file_t *extras;
+	struct file_t *installers;
+	short extras_count;
+	short installers_count;
 	char *title;
 	char *icon;
 };
@@ -61,7 +63,7 @@ struct download_t {
 };
 
 enum type_t {
-	DOWNLOAD,
+	DOWNLOAD = 1,
 	GAME,
 	USER
 };
@@ -71,11 +73,9 @@ struct message_t {
 	int timestamp;
 	enum type_t type;
 
-	union content_u {
-		struct download_t *download;
-		struct game_details_t *game;
-		struct user_details_t *user;
-	} content;
+	struct download_t download;
+	struct game_details_t game;
+	struct user_details_t user;
 };
 
 struct oauth_t {
@@ -98,6 +98,7 @@ int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
 int extract_files(struct array_list *list, struct file_t **out);
+int free_message(struct message_t *msg);
 
 /* api.c */
 int gog_download_config(struct oauth_t *oauth, const char *release);

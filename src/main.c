@@ -16,6 +16,8 @@ int main() {
 	oauth->secret = SECRET;
 
 	gog_game_details(oauth, "beneath_a_steel_sky");
+	printf("%d: %s\n", oauth->msg->game.installers[0].id, oauth->msg->game.installers[0].path);
+	free_message(oauth->msg);
 	/*
 	gog_user_games(oauth);
 	gog_installer_link(oauth, "beneath_a_steel_sky", 0);
