@@ -45,12 +45,9 @@ struct game_details_t {
 };
 
 struct user_details_t {
-	union avatar_t {
-		char *big;
-		char *small;
-	} avatar;
+	char *avatar;
 	char *email;
-	int id;
+	long id;
 	char *nick;
 };
 
@@ -100,8 +97,8 @@ int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
 /* util.c */
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
 int extract_files(struct array_list *list, struct file_t **out);
+int extract_download(const char *reply, struct download_t *out);
 int free_message(struct message_t *msg);
-
 /* api.c */
 int gog_download_config(struct oauth_t *oauth, const char *release);
 

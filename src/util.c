@@ -44,6 +44,29 @@ int extract_files(struct array_list *list, struct file_t **out) {
 	}
 	return 0;
 }
+int extract_download(const char *reply, struct download_t *out) {
+	struct json_object *answer, *file;
+
+	answer = json_tokener_parse(reply);
+	file = json_object_object_get(answer, "file");
+
+	out->available = json_object_get_int(json_object_object_get(file, "available"));
+	if(out->available) {
+		out->link = strdup(json_object_get_string(json_object_object_get(file, "link")));
+		out->message = strdup(json_object_get_string(json_object_object_get(file, "message")));
+		if(strlen(out->message) < 2)
+			free(out->message);
+
+		out->name = strdup(json_object_get_string(json_object_object_get(file, "name")));
+		out->type = strdup(json_object_get_string(json_object_object_get(file, "type")));
+
+		json_object_put(file);
+		json_object_put(answer);
+		
+		return 1;
+	}
+	return 0;
+}
 int free_message(struct message_t *msg) {
 	switch(msg->type) {
 		case GAME:
@@ -63,11 +86,25 @@ int free_message(struct message_t *msg) {
 
 			return 1;
 		case USER:
+			free(msg->user.avatar);
+			free(msg->user.email);
+			free(msg->user.nick);
+			free(msg);
 
-			break;
+			return 1;;
 		case DOWNLOAD:
+			if(msg->download.available) {
+				free(msg->download.link);
+				if(msg->download.message)
+					free(msg->download.message);
+				if(msg->download.name)
+					free(msg->download.name);
+				if(msg->download.type)
+					free(msg->download.type);
+			}
+			free(msg);
 
-			break;
+			return 1;
 		default:
 			return 0;
 	}

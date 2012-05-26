@@ -15,14 +15,13 @@ int main() {
 	oauth->token = TOKEN; 
 	oauth->secret = SECRET;
 
-	gog_game_details(oauth, "beneath_a_steel_sky");
-	printf("%d: %s\n", oauth->msg->game.installers[0].id, oauth->msg->game.installers[0].path);
+	gog_user_details(oauth);
 	free_message(oauth->msg);
 	/*
+	gog_game_details(oauth, "beneath_a_steel_sky");
 	gog_user_games(oauth);
 	gog_installer_link(oauth, "beneath_a_steel_sky", 0);
 	gog_installer_crc(oauth, "beneath_a_steel_sky", 0);
-	gog_user_details(oauth);
 	gog_extra_link(oauth, "tyrian_2000", 968); //WORKING
 	if(!gog_extra_link(oauth, "tyrian_2000", 967)) { //NOT EXISTANT
 		puts(oauth->error);
