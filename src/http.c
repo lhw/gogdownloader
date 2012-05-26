@@ -4,6 +4,10 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
     *response_ptr = strndup(buffer, (size_t)(size *nmemb));
 	 return strlen(*response_ptr);
 }
+size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void *userp) {
+	struct download_t *download = (struct download_t *)userp;
+
+}
 int http_get(const char *url, char **buffer, char **error_msg) {
 	CURL *curl;
 	CURLcode res;
