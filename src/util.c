@@ -65,6 +65,8 @@ int extract_download(const char *reply, struct download_t *out) {
 		
 		return 1;
 	}
+	json_object_put(file);
+	json_object_put(answer);
 	return 0;
 }
 int free_message(struct message_t *msg) {
