@@ -10,10 +10,10 @@ int main() {
 
 	gog_download_config(oauth, DEFAULT_RELEASE);
 
-	/*if(gog_login(oauth, USERNAME, PASSWORD))
-		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);*/
-	oauth->token = TOKEN; 
-	oauth->secret = SECRET;
+	if(gog_login(oauth, USERNAME, PASSWORD))
+		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);
+	/*oauth->token = TOKEN; 
+	oauth->secret = SECRET;*/
 
 	gog_game_details(oauth, "beneath_a_steel_sky");
 	printf("%d: %s\n", oauth->msg->game.installers[0].id, oauth->msg->game.installers[0].path);

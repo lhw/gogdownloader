@@ -3,7 +3,9 @@
 
 #include<string.h>
 #include<stdio.h>
+#include<unistd.h>
 #include<stdlib.h>
+#include<fcntl.h>
 #include<oauth.h>
 #include<curl/curl.h>
 #include<json/json.h>
@@ -35,6 +37,7 @@ struct file_t {
 	char *path;
 	float size;
 };
+
 struct game_details_t {
 	struct file_t *extras;
 	struct file_t *installers;
@@ -58,7 +61,8 @@ struct download_t {
 	char *name;
 	char *type;
 
-	/* range */
+	/* download info */
+	struct file_t *info;
 	int from;
 	int to;
 };
@@ -84,14 +88,13 @@ struct oauth_t {
 	char *secret;
 	char *error;
 
+	/* the transfered message parsed 
+		by the appropiate function */
 	struct message_t *msg;
 
 	/* only used during login process */
 	char *verifier;
 };
-
-
-CURL *curl;
 
 /* http.c */
 size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *userp);

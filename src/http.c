@@ -6,8 +6,10 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
 }
 size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void *userp) {
 	struct download_t *download = (struct download_t *)userp;
-
-	return 0;
+	int fd;
+	
+	fd = open(download->info->path, O_WRONLY | O_CREAT);
+	return pwrite(fd, buffer, download->to - download->from, download->from);
 }
 int http_get(const char *url, char **buffer, char **error_msg) {
 	CURL *curl;
