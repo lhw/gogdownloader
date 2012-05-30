@@ -5,6 +5,10 @@
 #include<stdio.h>
 #include<stdlib.h>
 #include<oauth.h>
+#include<errno.h>
+#include<sys/stat.h>
+#include<sys/types.h>
+
 #include<curl/curl.h>
 #include<json/json.h>
 
@@ -29,11 +33,24 @@ struct config_t {
 	char *set_app_status;
 } config;
 
+struct download_t {
+	int available;
+	char *link;
+	char *message;
+	char *name;
+	char *type;
+
+	struct active_t *active;
+	int active_count;
+};
+
 struct file_t {
 	int id;
 	char *name;
 	char *path;
 	float size;
+
+	struct download_t *download;
 };
 
 struct game_details_t {
@@ -52,23 +69,19 @@ struct user_details_t {
 	char *nick;
 };
 
-struct download_t {
-	int available;
-	char *link;
-	char *message;
-	char *name;
-	char *type;
-};
-
 struct active_t {
-	struct download_t *dl;
 	struct file_t *info;
+
 	FILE *file;
+	CURL *curl;
+
 	off_t from;
 	off_t to;
 	off_t current;
 	off_t chunk_size;
 };
+
+
 
 enum type_t {
 	DOWNLOAD = 1,
@@ -105,7 +118,8 @@ size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void 
 int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
 off_t get_remote_file_size(char *url);
-CURL *create_download_handle(struct active_t *a);
+int create_download_handle(struct active_t *a);
+int create_partial_download(struct file_t *file, int N);
 
 /* util.c */
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);

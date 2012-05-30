@@ -12,23 +12,12 @@ int main() {
 
 	if(gog_login(oauth, USERNAME, PASSWORD))
 		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);
-	/*oauth->token = TOKEN; 
-	oauth->secret = SECRET;*/
 
-	gog_game_details(oauth, "beneath_a_steel_sky");
-	printf("%d: %s\n", oauth->msg->game.installers[0].id, oauth->msg->game.installers[0].path);
-	free_message(oauth->msg);
-	/*
-	gog_user_details(oauth);
-	gog_user_games(oauth);
-	gog_installer_link(oauth, "beneath_a_steel_sky", 0);
-	gog_installer_crc(oauth, "beneath_a_steel_sky", 0);
-	gog_extra_link(oauth, "tyrian_2000", 968); //WORKING
-	if(!gog_extra_link(oauth, "tyrian_2000", 967)) { //NOT EXISTANT
-		puts(oauth->error);
+	if(gog_installer_link(oauth, "beneath_a_steel_sky", 0)) {
+		
 	}
-	*/
-	//free(oauth->token);
-	//free(oauth->secret);
+
+
+	free_message(oauth->msg);
 	free(oauth);
 }

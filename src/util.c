@@ -70,6 +70,8 @@ int extract_download(const char *reply, struct download_t *out) {
 	return 0;
 }
 int free_message(struct message_t *msg) {
+	if(!msg)
+		return 1;
 	switch(msg->type) {
 		case GAME:
 			for(int i = 0; i < msg->game.extras_count; i++) {
@@ -108,7 +110,7 @@ int free_message(struct message_t *msg) {
 
 			return 1;
 		default:
-			return 0;
+			return 1;
 	}
 
 	return 0;

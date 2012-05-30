@@ -24,25 +24,57 @@ off_t get_remote_file_size(char *url) {
 
 	return (off_t)length;
 }
-CURL *create_download_handle(struct active_t *a) {
-	CURL *curl;
+int create_download_handle(struct active_t *a) {
 	char *range;
 
 	range = malloc(22);
 	sprintf(range, "%ld-%ld", a->from, a->to);
 	a->file = fopen(a->info->path, "r+");
 	if(!a->file)
-		return NULL;
+		return 0;
 
-	curl = curl_easy_init();
-	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write_callback);
-	curl_easy_setopt(curl, CURLOPT_WRITEDATA, a);
-	curl_easy_setopt(curl, CURLOPT_URL, a->dl->link);
-	curl_easy_setopt(curl, CURLOPT_RANGE, range); 
+	a->curl = curl_easy_init();
+	curl_easy_setopt(a->curl, CURLOPT_WRITEFUNCTION, file_write_callback);
+	curl_easy_setopt(a->curl, CURLOPT_WRITEDATA, a);
+	curl_easy_setopt(a->curl, CURLOPT_URL, a->info->download->link);
+	curl_easy_setopt(a->curl, CURLOPT_RANGE, range); 
 
 	free(range);
 
-	return curl;
+	return 1;
+}
+int create_partial_download(struct file_t *file, int N) {
+	FILE *create;
+	char *directory;
+	off_t length, chunk;
+	struct download_t *dl;
+
+	dl = file->download;
+
+	strncpy(directory, file->path, strchr(file->path, '/') - file->path);
+	if(mkdir(directory, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && errno != EEXIST)
+		return 0;
+	free(directory);
+
+	dl->active = malloc(N * sizeof(struct active_t));
+
+	create = fopen(file->path, "w+");
+	fclose(create);
+
+	length = get_remote_file_size(dl->link);
+	chunk = length / N;
+
+	for(int i = 0; i < N; i++) {
+		dl->active[i].info = file;
+		dl->active[i].file = fopen(file->path, "r+");
+		dl->active[i].from = i * chunk;
+		dl->active[i].to = (i * chunk) + chunk;
+		if(dl->active[i].to + chunk >= length)
+			dl->active[i].to = length;
+		dl->active[i].chunk_size = chunk;
+	}
+
+	return 1;
 }
 int http_get(const char *url, char **buffer, char **error_msg) {
 	CURL *curl;
