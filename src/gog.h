@@ -67,6 +67,7 @@ struct active_t {
 	int from;
 	int to;
 	int current;
+	int chunk_size;
 };
 
 enum type_t {
@@ -103,6 +104,8 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
 size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
 int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
+size_t get_remote_file_size(char *url);
+CURL *create_download_handle(struct active_t *a);
 
 /* util.c */
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);

@@ -10,6 +10,40 @@ size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void 
 		fseek(active->file, active->from, SEEK_SET);
 	return (active->current = fwrite(buffer, size, nmemb, active->file));
 }
+size_t get_remote_file_size(char *url) {
+	CURL *curl;
+	double length;
+
+	curl = curl_easy_init();
+	curl_easy_setopt(curl, CURLOPT_NOBODY, 1);
+	curl_easy_setopt(curl, CURLOPT_URL, url);
+	curl_easy_perform(curl);
+
+	curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &length);
+	curl_easy_cleanup(curl);
+
+	return (long)length;
+}
+CURL *create_download_handle(struct active_t *a) {
+	CURL *curl;
+	char *range;
+
+	range = malloc(22);
+	sprintf(range, "%d-%d", a->from, a->to);
+	a->file = fopen(a->info->path, "r+");
+	if(!a->file)
+		return NULL;
+
+	curl = curl_easy_init();
+	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, file_write_callback);
+	curl_easy_setopt(curl, CURLOPT_WRITEDATA, a);
+	curl_easy_setopt(curl, CURLOPT_URL, a->dl->link);
+	curl_easy_setopt(curl, CURLOPT_RANGE, range); 
+
+	free(range);
+
+	return curl;
+}
 int http_get(const char *url, char **buffer, char **error_msg) {
 	CURL *curl;
 	CURLcode res;
