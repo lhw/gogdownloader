@@ -3,9 +3,7 @@
 
 #include<string.h>
 #include<stdio.h>
-#include<unistd.h>
 #include<stdlib.h>
-#include<fcntl.h>
 #include<oauth.h>
 #include<curl/curl.h>
 #include<json/json.h>
@@ -60,11 +58,15 @@ struct download_t {
 	char *message;
 	char *name;
 	char *type;
+};
 
-	/* download info */
+struct active_t {
+	struct download_t *dl;
 	struct file_t *info;
+	FILE *file;
 	int from;
 	int to;
+	int current;
 };
 
 enum type_t {

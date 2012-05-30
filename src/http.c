@@ -5,11 +5,10 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
 	 return strlen(*response_ptr);
 }
 size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void *userp) {
-	struct download_t *download = (struct download_t *)userp;
-	int fd;
-	
-	fd = open(download->info->path, O_WRONLY | O_CREAT);
-	return pwrite(fd, buffer, download->to - download->from, download->from);
+	struct active_t *active = (struct active_t *)userp;
+	if(!active->current && active->from)
+		fseek(active->file, active->from, SEEK_SET);
+	return (active->current = fwrite(buffer, size, nmemb, active->file));
 }
 int http_get(const char *url, char **buffer, char **error_msg) {
 	CURL *curl;
