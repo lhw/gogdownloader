@@ -104,7 +104,7 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
 size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
 int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
-size_t get_remote_file_size(char *url);
+off_t get_remote_file_size(char *url);
 CURL *create_download_handle(struct active_t *a);
 
 /* util.c */

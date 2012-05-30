@@ -10,7 +10,7 @@ size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void 
 		fseek(active->file, active->from, SEEK_SET);
 	return (active->current = fwrite(buffer, size, nmemb, active->file));
 }
-size_t get_remote_file_size(char *url) {
+off_t get_remote_file_size(char *url) {
 	CURL *curl;
 	double length;
 
@@ -22,7 +22,7 @@ size_t get_remote_file_size(char *url) {
 	curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &length);
 	curl_easy_cleanup(curl);
 
-	return (size_t)length;
+	return (off_t)length;
 }
 CURL *create_download_handle(struct active_t *a) {
 	CURL *curl;
