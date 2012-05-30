@@ -43,28 +43,33 @@ int create_download_handle(struct active_t *a) {
 
 	return 1;
 }
-int create_partial_download(struct file_t *file, int N) {
+int create_partial_download(struct file_t *file, int n) {
 	FILE *create;
-	char *directory;
+	char *directory, *seperator;
 	off_t length, chunk;
 	struct download_t *dl;
 
 	dl = file->download;
 
-	strncpy(directory, file->path, strchr(file->path, '/') - file->path);
-	if(mkdir(directory, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && errno != EEXIST)
+	directory = malloc(100);
+
+	seperator = strchr(file->path, '/');
+	strncpy(directory, file->path, seperator - file->path);
+	if(mkdir(directory, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && errno != EEXIST) {
+		free(directory);
 		return 0;
+	}
 	free(directory);
 
-	dl->active = malloc(N * sizeof(struct active_t));
+	dl->active = malloc(n * sizeof(struct active_t));
 
 	create = fopen(file->path, "w+");
 	fclose(create);
 
 	length = get_remote_file_size(dl->link);
-	chunk = length / N;
+	chunk = length / n;
 
-	for(int i = 0; i < N; i++) {
+	for(int i = 0; i < n; i++) {
 		dl->active[i].info = file;
 		dl->active[i].file = fopen(file->path, "r+");
 		dl->active[i].from = i * chunk;
