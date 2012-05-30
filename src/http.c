@@ -29,7 +29,7 @@ CURL *create_download_handle(struct active_t *a) {
 	char *range;
 
 	range = malloc(22);
-	sprintf(range, "%d-%d", a->from, a->to);
+	sprintf(range, "%ld-%ld", a->from, a->to);
 	a->file = fopen(a->info->path, "r+");
 	if(!a->file)
 		return NULL;

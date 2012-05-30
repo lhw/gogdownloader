@@ -64,10 +64,10 @@ struct active_t {
 	struct download_t *dl;
 	struct file_t *info;
 	FILE *file;
-	int from;
-	int to;
-	int current;
-	int chunk_size;
+	off_t from;
+	off_t to;
+	off_t current;
+	off_t chunk_size;
 };
 
 enum type_t {
