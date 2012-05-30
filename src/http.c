@@ -22,7 +22,7 @@ size_t get_remote_file_size(char *url) {
 	curl_easy_getinfo(curl, CURLINFO_CONTENT_LENGTH_DOWNLOAD, &length);
 	curl_easy_cleanup(curl);
 
-	return (long)length;
+	return (size_t)length;
 }
 CURL *create_download_handle(struct active_t *a) {
 	CURL *curl;
