@@ -57,6 +57,7 @@ int create_partial_download(struct file_t *file, int N) {
 	free(directory);
 
 	dl->active = malloc(N * sizeof(struct active_t));
+	dl->multi = curl_multi_init();
 
 	create = fopen(file->path, "w+");
 	fclose(create);
@@ -72,6 +73,10 @@ int create_partial_download(struct file_t *file, int N) {
 		if(dl->active[i].to + chunk >= length)
 			dl->active[i].to = length;
 		dl->active[i].chunk_size = chunk;
+
+		if(create_download_handle(dl->active)) {
+			curl_multi_add_handle(dl->multi, dl->active[i].curl);
+		}
 	}
 
 	return 1;
