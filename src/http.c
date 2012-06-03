@@ -29,28 +29,27 @@ int create_download_handle(struct active_t *a) {
 
 	range = malloc(22);
 	sprintf(range, "%ld-%ld", a->from, a->to);
-	a->file = fopen(a->info->path, "r+");
+	a->file = fopen(a->info->file->path, "r+");
 	if(!a->file)
 		return 0;
 
 	a->curl = curl_easy_init();
 	curl_easy_setopt(a->curl, CURLOPT_WRITEFUNCTION, file_write_callback);
 	curl_easy_setopt(a->curl, CURLOPT_WRITEDATA, a);
-	curl_easy_setopt(a->curl, CURLOPT_URL, a->info->download->link);
+	curl_easy_setopt(a->curl, CURLOPT_URL, a->info->link);
 	curl_easy_setopt(a->curl, CURLOPT_RANGE, range); 
 
 	free(range);
 
 	return 1;
 }
-int create_partial_download(struct file_t *file, int n) {
+int create_partial_download(struct download_t *dl, int n) {
 	FILE *create;
 	char *directory, *seperator;
 	off_t length, chunk;
-	struct download_t *dl;
+	struct file_t *file;
 
-	dl = file->download;
-
+	file = dl->file;
 	directory = malloc(100);
 
 	seperator = strchr(file->path, '/');
@@ -70,7 +69,7 @@ int create_partial_download(struct file_t *file, int n) {
 	chunk = length / n;
 
 	for(int i = 0; i < n; i++) {
-		dl->active[i].info = file;
+		dl->active[i].info = dl;
 		dl->active[i].file = fopen(file->path, "r+");
 		dl->active[i].from = i * chunk;
 		dl->active[i].to = (i * chunk) + chunk;

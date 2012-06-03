@@ -40,6 +40,8 @@ struct download_t {
 	char *name;
 	char *type;
 
+	struct file_t *file;
+
 	struct active_t *active;
 	int active_count;
 };
@@ -49,8 +51,6 @@ struct file_t {
 	char *name;
 	char *path;
 	float size;
-
-	struct download_t *download;
 };
 
 struct game_details_t {
@@ -70,7 +70,7 @@ struct user_details_t {
 };
 
 struct active_t {
-	struct file_t *info;
+	struct download_t *info;
 
 	FILE *file;
 	CURL *curl;
@@ -119,7 +119,7 @@ int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
 off_t get_remote_file_size(char *url);
 int create_download_handle(struct active_t *a);
-int create_partial_download(struct file_t *file, int n);
+int create_partial_download(struct download_t *dl, int n);
 
 /* util.c */
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
