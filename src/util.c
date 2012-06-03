@@ -115,3 +115,14 @@ int free_message(struct message_t *msg) {
 
 	return 0;
 }
+int file_exists(char *path) {
+	FILE *fp = fopen(path, "r");
+	if(!fp) {
+		fclose(fp);
+		return 0;
+	}
+	else {
+		fclose(fp);
+		return 1;
+	}
+}

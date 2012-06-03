@@ -44,6 +44,7 @@ struct download_t {
 
 	struct active_t *active;
 	int active_count;
+	CURLM *multi;
 };
 
 struct file_t {
@@ -126,6 +127,7 @@ struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
 int extract_files(struct array_list *list, struct file_t **out);
 int extract_download(const char *reply, struct download_t *out);
 int free_message(struct message_t *msg);
+int file_exists(char *path);
 
 /* api.c */
 int gog_download_config(struct oauth_t *oauth, const char *release);
