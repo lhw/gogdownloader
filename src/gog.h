@@ -56,7 +56,8 @@ struct download_t {
 	/** categories for extras */
 	char *type;
 
-	/** all active http connections */
+	struct file_t *file;
+
 	struct active_t *active;
 	/** connection count */
 	int active_count;
@@ -74,9 +75,6 @@ struct file_t {
 	char *path;
 	/** approximate double file size with , instead of a . */
 	float size;
-
-	/** backreference */
-	struct download_t *download;
 };
 
 /** details of the game */
@@ -109,8 +107,8 @@ struct user_details_t {
 
 /** active file download */
 struct active_t {
-	/** the active file */
-	struct file_t *info;
+	/** active file info */
+	struct download_t *info;
 
 	/** OS file handle */
 	FILE *file;
@@ -174,7 +172,7 @@ int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
 off_t get_remote_file_size(char *url);
 int create_download_handle(struct active_t *a);
-int create_partial_download(struct file_t *file, int N);
+int create_partial_download(struct download_t *dl, int n);
 
 /* util.c */
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
@@ -223,11 +221,6 @@ int gog_token(struct oauth_t *oauth);
   */
 int gog_login(struct oauth_t *oauth, const char *email, const char *password);
 
-/**
-  *
-  *
-  *
-  */
 int gog_user_games(struct oauth_t *oauth);
 int gog_game_details(struct oauth_t *oauth, const char *game);
 int gog_user_details(struct oauth_t *oauth);

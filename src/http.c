@@ -29,44 +29,47 @@ int create_download_handle(struct active_t *a) {
 
 	range = malloc(22);
 	sprintf(range, "%ld-%ld", a->from, a->to);
-	a->file = fopen(a->info->path, "r+");
+	a->file = fopen(a->info->file->path, "r+");
 	if(!a->file)
 		return 0;
 
 	a->curl = curl_easy_init();
 	curl_easy_setopt(a->curl, CURLOPT_WRITEFUNCTION, file_write_callback);
 	curl_easy_setopt(a->curl, CURLOPT_WRITEDATA, a);
-	curl_easy_setopt(a->curl, CURLOPT_URL, a->info->download->link);
+	curl_easy_setopt(a->curl, CURLOPT_URL, a->info->link);
 	curl_easy_setopt(a->curl, CURLOPT_RANGE, range); 
 
 	free(range);
 
 	return 1;
 }
-int create_partial_download(struct file_t *file, int N) {
+int create_partial_download(struct download_t *dl, int n) {
 	FILE *create;
-	char *directory;
+	char *directory, *seperator;
 	off_t length, chunk;
-	struct download_t *dl;
+	struct file_t *file;
 
-	dl = file->download;
+	file = dl->file;
+	directory = malloc(100);
 
-	strncpy(directory, file->path, strchr(file->path, '/') - file->path);
-	if(mkdir(directory, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && errno != EEXIST)
+	seperator = strchr(file->path, '/');
+	strncpy(directory, file->path, seperator - file->path);
+	if(mkdir(directory, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && errno != EEXIST) {
+		free(directory);
 		return 0;
+	}
 	free(directory);
 
-	dl->active = malloc(N * sizeof(struct active_t));
-	dl->multi = curl_multi_init();
+	dl->active = malloc(n * sizeof(struct active_t));
 
 	create = fopen(file->path, "w+");
 	fclose(create);
 
 	length = get_remote_file_size(dl->link);
-	chunk = length / N;
+	chunk = length / n;
 
-	for(int i = 0; i < N; i++) {
-		dl->active[i].info = file;
+	for(int i = 0; i < n; i++) {
+		dl->active[i].info = dl;
 		dl->active[i].file = fopen(file->path, "r+");
 		dl->active[i].from = i * chunk;
 		dl->active[i].to = (i * chunk) + chunk;
