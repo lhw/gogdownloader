@@ -38,7 +38,7 @@ struct config_t {
 	/** list of all files and extras */
 	char *get_game_details;
 	/** the file links for the extras */
-	char *get_extra_link
+	char *get_extra_link;
 	/** no idea what this is. not implemented */
 	char *set_app_status;
 } config;
