@@ -13,12 +13,14 @@ int main() {
 
 	gog_download_config(oauth, DEFAULT_RELEASE);
 
-#if 0
 	if(gog_login(oauth, USERNAME, PASSWORD))
 		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);
-#endif
+	else
+		print_error(oauth);
+#if 0
 	oauth->token = TOKEN;
 	oauth->secret = SECRET;
+#endif
 
 	if(gog_game_details(oauth, "beneath_a_steel_sky")) {
 		game = oauth->msg->game;
@@ -30,8 +32,12 @@ int main() {
 
 			free_download(download);
 		}
+		else
+			print_error(oauth);
 		free_game(game);
 	}
+	else
+		print_error(oauth);
 
 
 	free_message(oauth->msg);

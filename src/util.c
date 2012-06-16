@@ -134,3 +134,7 @@ int file_exists(char *path) {
 		return 1;
 	}
 }
+void print_error(struct oauth_t *oauth) {
+	if(oauth->error && strlen(oauth->error) > 1)
+		printf("ERROR: %s", oauth->error);
+}

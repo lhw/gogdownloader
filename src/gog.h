@@ -188,6 +188,7 @@ void free_download(struct download_t *download);
 void free_active(struct active_t *active);
 
 int file_exists(char *path);
+void print_error(struct oauth_t *oauth);
 
 /* api.c */
 /** \brief Downloads the gog api configuration containing all urls

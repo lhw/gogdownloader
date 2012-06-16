@@ -112,6 +112,15 @@ int http_get(const char *url, char **buffer, char **error_msg) {
 			*error_msg = "Failed for unknown reason";
 		}
 	}
+	/* XXX: dirty check here. really have to change this */
+	if(*buffer[0] == '<') {
+		res = 1;
+		if(*error_msg && strlen(*error_msg) > 1)
+			free(*error_msg);
+		*error_msg = strdup(*buffer);
+		curl_free(*buffer);
+		*buffer = NULL;
+	}
 
 	curl_easy_cleanup(curl);
 	curl_free(error);
