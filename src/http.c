@@ -52,8 +52,9 @@ int create_partial_download(struct download_t *dl, int n) {
 	file = dl->file;
 	directory = malloc(100);
 
-	seperator = strchr(file->path, '/');
-	strncpy(directory, file->path, seperator - file->path);
+	seperator = strchr(file->path+1, '/');
+	strcpy(directory, file->path);
+	directory[seperator - file->path] = 0;
 	if(mkdir(directory, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && errno != EEXIST) {
 		free(directory);
 		return 0;
@@ -124,5 +125,28 @@ int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer) {
 	req_url = oauth_sign_url2(url, NULL, OA_HMAC, NULL, CONSUMER_KEY, CONSUMER_SECRET, oauth->token, oauth->secret);
 	res = http_get(req_url, buffer, &(oauth->error));
 	free(req_url);
+	return res;
+}
+int http_get_json(struct oauth_t *oauth, const char *url, char **buffer) {
+	int res;
+	struct json_object *answer;
+	char *error_msg;
+	
+	error_msg = oauth->error;
+	res = http_get_oauth(oauth, url, buffer);
+	if(res) {
+		answer = json_tokener_parse(*buffer);
+		if(is_error(answer)) {
+			res = 0;
+			if(error_msg)
+				free(error_msg);
+			error_msg = strdup(*buffer);
+			curl_free(*buffer);
+			*buffer = NULL;
+		}
+		else
+			json_object_put(answer);
+	}
+
 	return res;
 }

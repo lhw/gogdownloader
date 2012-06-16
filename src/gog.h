@@ -56,8 +56,10 @@ struct download_t {
 	/** categories for extras */
 	char *type;
 
+	/** backreference */
 	struct file_t *file;
 
+	/** currently active connections */
 	struct active_t *active;
 	/** connection count */
 	int active_count;
@@ -142,11 +144,11 @@ struct message_t {
 	enum type_t type;
 
 	/** message is one of these, check type */
-	struct download_t download;
+	struct download_t *download;
 	/** message is one of these, check type  */
-	struct game_details_t game;
+	struct game_details_t *game;
 	/** message is one of these, check type */
-	struct user_details_t user;
+	struct user_details_t *user;
 };
 
 /** auth information */
@@ -170,6 +172,7 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
 size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void *userp);
 int http_get(const char *url, char **buffer, char **error_msg);
 int http_get_oauth(struct oauth_t *oauth, const char *url, char **buffer);
+int http_get_json(struct oauth_t *oauth, const char *url, char **buffer);
 off_t get_remote_file_size(char *url);
 int create_download_handle(struct active_t *a);
 int create_partial_download(struct download_t *dl, int n);
@@ -178,7 +181,12 @@ int create_partial_download(struct download_t *dl, int n);
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
 int extract_files(struct array_list *list, struct file_t **out);
 int extract_download(const char *reply, struct download_t *out);
-int free_message(struct message_t *msg);
+void free_message(struct message_t *msg);
+void free_game(struct game_details_t *game);
+void free_user(struct user_details_t *user);
+void free_download(struct download_t *download);
+void free_active(struct active_t *active);
+
 int file_exists(char *path);
 
 /* api.c */

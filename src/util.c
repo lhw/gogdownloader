@@ -2,9 +2,9 @@
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply) {
 	struct json_object *answer;
 
-	if(oauth->msg != NULL)
-		free(oauth->msg);
-	oauth->msg = malloc(sizeof(struct message_t));
+	/*if(oauth->msg != NULL)
+		free_message(oauth->msg);
+	oauth->msg = malloc(sizeof(struct message_t));*/
 
 	answer = json_tokener_parse(reply);
 	oauth->msg->result = strcmp(json_object_get_string(json_object_object_get(answer, "result")), "ok") == 0 ? 1 : 0;
@@ -45,7 +45,7 @@ int extract_files(struct array_list *list, struct file_t **out) {
 	return 0;
 }
 int extract_download(const char *reply, struct download_t *out) {
-	struct json_object *answer, *file;
+	struct json_object *answer, *file, *tmp;
 
 	answer = json_tokener_parse(reply);
 	file = json_object_object_get(answer, "file");
@@ -54,11 +54,20 @@ int extract_download(const char *reply, struct download_t *out) {
 	if(out->available) {
 		out->link = strdup(json_object_get_string(json_object_object_get(file, "link")));
 		out->message = strdup(json_object_get_string(json_object_object_get(file, "message")));
-		if(strlen(out->message) < 2)
+		if(strlen(out->message) < 2) {
 			free(out->message);
+			out->message = NULL;
+		}
 
-		out->name = strdup(json_object_get_string(json_object_object_get(file, "name")));
-		out->type = strdup(json_object_get_string(json_object_object_get(file, "type")));
+		if((tmp = json_object_object_get(file, "name")) != NULL)
+			out->name = strdup(json_object_get_string(tmp));
+		else
+			out->name = NULL;
+
+		if((tmp = json_object_object_get(file, "type")) != NULL)
+			out->type = strdup(json_object_get_string(tmp));
+		else
+			out->name = NULL;
 
 		json_object_put(file);
 		json_object_put(answer);
@@ -69,51 +78,50 @@ int extract_download(const char *reply, struct download_t *out) {
 	json_object_put(answer);
 	return 0;
 }
-int free_message(struct message_t *msg) {
+void free_message(struct message_t *msg) {
 	if(!msg)
-		return 1;
+		return;
 	switch(msg->type) {
 		case GAME:
-			for(int i = 0; i < msg->game.extras_count; i++) {
-				if(msg->game.extras[i].name)
-					free(msg->game.extras[i].name);
-				free(msg->game.extras[i].path);
-			}
-			free(msg->game.extras);
-			for(int i = 0; i < msg->game.installers_count; i++)
-				free(msg->game.installers[i].path);
-			free(msg->game.installers);
-
-			free(msg->game.icon);
-
-			free(msg);
-
-			return 1;
+			free_game(msg->game);
+			break;
 		case USER:
-			free(msg->user.avatar);
-			free(msg->user.email);
-			free(msg->user.nick);
-			free(msg);
-
-			return 1;;
+			free_user(msg->user);
+			break;
 		case DOWNLOAD:
-			if(msg->download.available) {
-				free(msg->download.link);
-				if(msg->download.message)
-					free(msg->download.message);
-				if(msg->download.name)
-					free(msg->download.name);
-				if(msg->download.type)
-					free(msg->download.type);
-			}
-			free(msg);
-
-			return 1;
-		default:
-			return 1;
+			free_download(msg->download);
+			break;
 	}
-
-	return 0;
+	free(msg);
+}
+void free_game(struct game_details_t *game) {
+	for(int i = 0; i < game->extras_count; i++) {
+		if(game->extras[i].name)
+			free(game->extras[i].name);
+		free(game->extras[i].path);
+	}
+	free(game->extras);
+	for(int i = 0; i < game->installers_count; i++)
+		free(game->installers[i].path);
+	free(game->installers);
+	free(game->icon);
+}
+void free_user(struct user_details_t *user) {
+	free(user->avatar);
+	free(user->email);
+	free(user->nick);
+}
+void free_download(struct download_t *download) {
+	if(download->available) {
+		free(download->link);
+		if(download->message)
+			free(download->message);
+		if(download->name)
+			free(download->name);
+		if(download->type)
+			free(download->type);
+	}
+	//TODO: free actives
 }
 int file_exists(char *path) {
 	FILE *fp = fopen(path, "r");

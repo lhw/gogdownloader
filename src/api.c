@@ -116,23 +116,24 @@ int gog_game_details(struct oauth_t *oauth, const char *game) {
 	game_details_uri = malloc(strlen(config.get_game_details) + strlen(game) + 2);
 	sprintf(game_details_uri, "%s%s/", config.get_game_details, game);
 
-	if((res = http_get_oauth(oauth, game_details_uri, &reply))) {
+	if((res = http_get_json(oauth, game_details_uri, &reply))) {
 		struct message_t *msg = setup_handler(oauth, reply);
 
 		if(msg->result) {
 			msg->type = GAME;
+			msg->game = malloc(sizeof(struct game_details_t));
 
 			answer = json_tokener_parse(reply);
 			obj = json_object_object_get(answer, "game");
 
-			msg->game.icon = strdup(json_object_get_string(json_object_object_get(obj, "icon")));
+			msg->game->icon = strdup(json_object_get_string(json_object_object_get(obj, "icon")));
 
 			list = json_object_get_array(json_object_object_get(obj, "extras"));
-			msg->game.extras_count = extract_files(list, &(msg->game.extras));
+			msg->game->extras_count = extract_files(list, &(msg->game->extras));
 			array_list_free(list);
 
 			list = json_object_get_array(json_object_object_get(obj, "installers"));
-			msg->game.installers_count = extract_files(list, &(msg->game.installers));
+			msg->game->installers_count = extract_files(list, &(msg->game->installers));
 			array_list_free(list);
 
 			/* crashes - but shouldn't
@@ -156,25 +157,26 @@ int gog_user_details(struct oauth_t *oauth) {
 	char *reply = NULL, *avatar;
 	struct json_object *answer, *user, *tmp;
 
-	if(http_get_oauth(oauth, config.get_user_details, &reply)) {
+	if(http_get_json(oauth, config.get_user_details, &reply)) {
 		struct message_t *msg = setup_handler(oauth, reply);
 
 		if(msg->result) {
 			msg->type = USER;
+			msg->user = malloc(sizeof(struct user_details_t));
 
 			answer = json_tokener_parse(reply);
 			user = json_object_object_get(answer, "user");
 
-			msg->user.id = (long)json_object_get_double(json_object_object_get(user, "id"));
-			msg->user.email = strdup(json_object_get_string(json_object_object_get(user, "email")));
-			msg->user.nick = strdup(json_object_get_string(json_object_object_get(user, "xywka")));
+			msg->user->id = (long)json_object_get_double(json_object_object_get(user, "id"));
+			msg->user->email = strdup(json_object_get_string(json_object_object_get(user, "email")));
+			msg->user->nick = strdup(json_object_get_string(json_object_object_get(user, "xywka")));
 
 			tmp = json_object_object_get(user, "avatar");
 			avatar = strdup(json_object_get_string(json_object_object_get(tmp, "big")));
 			if(strlen(avatar) > 1)
-				msg->user.avatar = avatar;
+				msg->user->avatar = avatar;
 			else {
-				msg->user.avatar = strdup(json_object_get_string(json_object_object_get(tmp, "small")));
+				msg->user->avatar = strdup(json_object_get_string(json_object_object_get(tmp, "small")));
 				free(avatar);
 			}
 
@@ -197,12 +199,13 @@ int gog_extra_link(struct oauth_t *oauth, const char *game, const short file_id)
 	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 7);
 	sprintf(extra_link_uri, "%s%s/%d/", config.get_extra_link , game, file_id);
 
-	if(http_get_oauth(oauth, extra_link_uri, &reply)) {
+	if(http_get_json(oauth, extra_link_uri, &reply)) {
 		struct message_t *msg = setup_handler(oauth, reply);
 
 		if(msg->result) {
 			msg->type = DOWNLOAD;
-			if(extract_download(reply, &(msg->download))) {
+			msg->download = malloc(sizeof(struct download_t));
+			if(extract_download(reply, msg->download)) {
 				free(extra_link_uri);
 				free(reply);
 				return 1;
@@ -223,12 +226,13 @@ int gog_installer_link(struct oauth_t *oauth, const char *game, const short file
 	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 7);
 	sprintf(installer_link_uri, "%s%s/%d/", config.get_installer_link , game, file_id);
 
-	if(http_get_oauth(oauth, installer_link_uri, &reply)) {
+	if(http_get_json(oauth, installer_link_uri, &reply)) {
 		struct message_t *msg = setup_handler(oauth, reply);
 
 		if(msg->result) {
 			msg->type = DOWNLOAD;
-			if(extract_download(reply, &(msg->download))) {
+			msg->download = malloc(sizeof(struct download_t));
+			if(extract_download(reply, msg->download)) {
 				free(installer_link_uri);
 				free(reply);
 				return 1;
@@ -247,7 +251,7 @@ int gog_user_games(struct oauth_t *oauth) {
 	char *reply = NULL;
 	int res;
 
-	if((res = http_get_oauth(oauth, config.get_user_games, &reply))) {
+	if((res = http_get_json(oauth, config.get_user_games, &reply))) {
 		puts(reply);
 	}
 
@@ -294,12 +298,13 @@ int gog_installer_crc(struct oauth_t *oauth, const char *game, const short file_
 	file_crc_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 8);
 	sprintf(file_crc_uri, "%s%s/%d/crc/", config.get_installer_link , game, file_id);
 
-	if(http_get_oauth(oauth, file_crc_uri, &reply)) {
+	if(http_get_json(oauth, file_crc_uri, &reply)) {
 		struct message_t *msg = setup_handler(oauth, reply);
 
 		if(msg->result) {
 			msg->type = DOWNLOAD;
-			if(extract_download(reply, &(msg->download))) {
+			msg->download = malloc(sizeof(struct download_t));
+			if(extract_download(reply, msg->download)) {
 				free(file_crc_uri);
 				free(reply);
 				return 1;
