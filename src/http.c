@@ -100,14 +100,14 @@ int http_get(const char *url, char **buffer, char **error_msg) {
 	curl_easy_setopt(curl, CURLOPT_URL, url);
 
 	if((res = curl_easy_perform(curl)) != 0 && error_msg != NULL) {
-		if(*error_msg)
+		if(*error_msg && strlen(*error_msg) > 1)
 			free(*error_msg);
 		*error_msg = strdup(error);
 	}
 	if(!*buffer) {
 		res = 1;
 		if(error_msg != NULL) {
-			if(*error_msg)
+			if(*error_msg && strlen(*error_msg) > 1)
 				free(*error_msg);
 			*error_msg = "Failed for unknown reason";
 		}
@@ -138,7 +138,7 @@ int http_get_json(struct oauth_t *oauth, const char *url, char **buffer) {
 		answer = json_tokener_parse(*buffer);
 		if(is_error(answer)) {
 			res = 0;
-			if(error_msg)
+			if(error_msg && strlen(error_msg) > 1)
 				free(error_msg);
 			error_msg = strdup(*buffer);
 			curl_free(*buffer);
