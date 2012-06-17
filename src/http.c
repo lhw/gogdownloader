@@ -29,7 +29,7 @@ int create_download_handle(struct active_t *a) {
 
 	range = malloc(22);
 	sprintf(range, "%ld-%ld", a->from, a->to);
-	a->file = fopen(a->info->file->path, "r+");
+	a->file = fopen(a->info->file->path+1, "r+");
 	if(!a->file)
 		return 0;
 
@@ -63,7 +63,7 @@ int create_partial_download(struct download_t *dl, int n) {
 
 	dl->active = malloc(n * sizeof(struct active_t));
 
-	create = fopen(file->path, "w+");
+	create = fopen(file->path+1, "w+");
 	fclose(create);
 
 	length = get_remote_file_size(dl->link);
@@ -71,7 +71,6 @@ int create_partial_download(struct download_t *dl, int n) {
 
 	for(int i = 0; i < n; i++) {
 		dl->active[i].info = dl;
-		dl->active[i].file = fopen(file->path, "r+");
 		dl->active[i].from = i * chunk;
 		dl->active[i].to = (i * chunk) + chunk;
 		if(dl->active[i].to + chunk >= length)
