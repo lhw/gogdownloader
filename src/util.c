@@ -131,7 +131,7 @@ void free_download(struct download_t *download) {
 void free_active(struct active_t *active) {
 	if(active->file)
 		fclose(active->file);
-	curl_easy_cleanup(actve->curl);
+	curl_easy_cleanup(active->curl);
 }
 int file_exists(char *path) {
 	FILE *fp = fopen(path, "r");
