@@ -126,6 +126,7 @@ int gog_game_details(struct oauth_t *oauth, const char *game) {
 			answer = json_tokener_parse(reply);
 			obj = json_object_object_get(answer, "game");
 
+			msg->game->title = strdup(json_object_get_string(json_object_object_get(obj, "title")));
 			msg->game->icon = strdup(json_object_get_string(json_object_object_get(obj, "icon")));
 
 			list = json_object_get_array(json_object_object_get(obj, "extras"));

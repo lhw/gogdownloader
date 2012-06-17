@@ -53,8 +53,8 @@ int create_partial_download(struct download_t *dl, int n) {
 	directory = malloc(100);
 
 	seperator = strchr(file->path+1, '/');
-	strcpy(directory, file->path);
-	directory[seperator - file->path] = 0;
+	strcpy(directory, file->path+1);
+	directory[seperator - file->path-1] = 0;
 	if(mkdir(directory, S_IRWXU | S_IRGRP | S_IXGRP | S_IROTH | S_IXOTH) && errno != EEXIST) {
 		free(directory);
 		return 0;
