@@ -77,8 +77,13 @@ int create_partial_download(struct download_t *dl, int n) {
 			dl->active[i].to = length;
 		dl->active[i].chunk_size = chunk;
 
-		if(create_download_handle(dl->active)) {
+		if(create_download_handle(&(dl->active[i]))) {
 			curl_multi_add_handle(dl->multi, dl->active[i].curl);
+		}
+		else {
+			for(int j = 0; j < i; j++)
+				free_active(&(dl->active[j]));
+			free(dl->active);
 		}
 	}
 

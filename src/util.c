@@ -121,7 +121,17 @@ void free_download(struct download_t *download) {
 		if(download->type)
 			free(download->type);
 	}
-	//TODO: free actives
+	if(download->active_count > 0) {
+		for(int i = 0; i < download->active_count; i++)
+			free_active(&(download->active[i]));
+	}
+	curl_multi_cleanup(download->multi);
+
+}
+void free_active(struct active_t *active) {
+	if(active->file)
+		fclose(active->file);
+	curl_easy_cleanup(actve->curl);
 }
 int file_exists(char *path) {
 	FILE *fp = fopen(path, "r");
