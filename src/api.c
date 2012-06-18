@@ -194,60 +194,6 @@ int gog_user_details(struct oauth_t *oauth) {
 
 	return 0;
 }
-int gog_extra_link(struct oauth_t *oauth, const char *game, const short file_id) {
-	char *reply = NULL, *extra_link_uri = NULL;
-
-	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 7);
-	sprintf(extra_link_uri, "%s%s/%d/", config.get_extra_link , game, file_id);
-
-	if(http_get_json(oauth, extra_link_uri, &reply)) {
-		struct message_t *msg = setup_handler(oauth, reply);
-
-		if(msg->result) {
-			msg->type = DOWNLOAD;
-			msg->download = malloc(sizeof(struct download_t));
-			if(extract_download(reply, msg->download)) {
-				free(extra_link_uri);
-				free(reply);
-				return 1;
-
-			}
-		}	
-	}
-
-	free(extra_link_uri);
-	if(reply)
-		free(reply);
-
-	return 0;
-}
-int gog_installer_link(struct oauth_t *oauth, const char *game, const short file_id) {
-	char *reply = NULL, *installer_link_uri = NULL;
-
-	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 7);
-	sprintf(installer_link_uri, "%s%s/%d/", config.get_installer_link , game, file_id);
-
-	if(http_get_json(oauth, installer_link_uri, &reply)) {
-		struct message_t *msg = setup_handler(oauth, reply);
-
-		if(msg->result) {
-			msg->type = DOWNLOAD;
-			msg->download = malloc(sizeof(struct download_t));
-			if(extract_download(reply, msg->download)) {
-				free(installer_link_uri);
-				free(reply);
-				return 1;
-
-			}
-		}	
-	}
-
-	free(installer_link_uri);
-	if(reply)
-		free(reply);
-
-	return 0;
-}
 int gog_user_games(struct oauth_t *oauth) {
 	char *reply = NULL;
 	int res;
@@ -293,30 +239,48 @@ int gog_download_config(struct oauth_t *oauth, const char *release) {
 
 	return res;
 }
+int gog_extra_link(struct oauth_t *oauth, const char *game, const short file_id) {
+	char *reply = NULL, *extra_link_uri = NULL;
+
+	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 7);
+	sprintf(extra_link_uri, "%s%s/%d/", config.get_extra_link , game, file_id);
+
+	if(receive_download_links(oauth, extra_link_uri)) {
+		free(extra_link_uri);
+		return 1;
+	}
+	else {
+		free(extra_link_uri);
+		return 0;
+	}
+}
+int gog_installer_link(struct oauth_t *oauth, const char *game, const short file_id) {
+	char *installer_link_uri = NULL;
+
+	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 7);
+	sprintf(installer_link_uri, "%s%s/%d/", config.get_installer_link , game, file_id);
+
+	if(receive_download_links(oauth, installer_link_uri)) {
+		free(installer_link_uri);
+		return 1;
+	}
+	else {
+		free(installer_link_uri);
+		return 0;
+	}
+}
 int gog_installer_crc(struct oauth_t *oauth, const char *game, const short file_id) {
-	char *reply = NULL, *file_crc_uri = NULL;
+	char *file_crc_uri = NULL;
 
 	file_crc_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 8);
 	sprintf(file_crc_uri, "%s%s/%d/crc/", config.get_installer_link , game, file_id);
 
-	if(http_get_json(oauth, file_crc_uri, &reply)) {
-		struct message_t *msg = setup_handler(oauth, reply);
-
-		if(msg->result) {
-			msg->type = DOWNLOAD;
-			msg->download = malloc(sizeof(struct download_t));
-			if(extract_download(reply, msg->download)) {
-				free(file_crc_uri);
-				free(reply);
-				return 1;
-
-			}
-		}	
+	if(receive_download_links(oauth, file_crc_uri)) {
+		free(file_crc_uri);
+		return 1;
 	}
-
-	free(file_crc_uri);
-	if(reply)
-		free(reply);
-
-	return 0;
+	else {
+		free(file_crc_uri);
+		return 0;
+	}
 }

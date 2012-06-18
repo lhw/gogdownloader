@@ -78,6 +78,27 @@ int extract_download(const char *reply, struct download_t *out) {
 	json_object_put(answer);
 	return 0;
 }
+int receive_download_links(struct oauth_t *oauth, const char *url) {
+	char *reply;
+
+	if(http_get_json(oauth, url, &reply)) {
+		struct message_t *msg = setup_handler(oauth, reply);
+
+		if(msg->result) {
+			msg->type = DOWNLOAD;
+			msg->download = malloc(sizeof(struct download_t));
+			if(extract_download(reply, msg->download)) {
+				free(file_crc_uri);
+				free(reply);
+				return 1;
+
+			}
+		}
+	}
+	if(reply)
+		free(reply);
+	return 0;
+}
 void free_message(struct message_t *msg) {
 	if(!msg)
 		return;
