@@ -88,7 +88,6 @@ int receive_download_links(struct oauth_t *oauth, const char *url) {
 			msg->type = DOWNLOAD;
 			msg->download = malloc(sizeof(struct download_t));
 			if(extract_download(reply, msg->download)) {
-				free(file_crc_uri);
 				free(reply);
 				return 1;
 
