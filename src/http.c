@@ -98,10 +98,10 @@ int create_partial_download(struct download_t *dl, int n) {
 int http_get(const char *url, char **buffer, char **error_msg) {
 	CURL *curl;
 	CURLcode res;
-	char *error;
+	char error[CURL_ERROR_SIZE], *begin, *end;
+	size_t length;
 
 	curl = curl_easy_init();
-	error = malloc(1000);
 
 	curl_easy_setopt(curl, CURLOPT_ERRORBUFFER, &error); 
 	curl_easy_setopt(curl, CURLOPT_HTTPGET, 1);
@@ -122,18 +122,24 @@ int http_get(const char *url, char **buffer, char **error_msg) {
 			*error_msg = "Failed for unknown reason";
 		}
 	}
+
 	/* XXX: dirty check here. really have to change this */
 	if(*buffer[0] == '<') {
 		res = 1;
 		if(*error_msg && strlen(*error_msg) > 1)
 			free(*error_msg);
-		*error_msg = strdup(*buffer);
-		curl_free(*buffer);
-		*buffer = NULL;
+
+		/* error_msg ~ "<h1>500 - internal server error</h1>" */
+		begin = strchr(*buffer, '>');
+		end = strchr(begin, '<');
+		length = (end-1)-(begin+1);
+		*error_msg = malloc(length);
+		strncpy(*error_msg, begin, length);
+
+		free(*buffer);
 	}
 
 	curl_easy_cleanup(curl);
-	curl_free(error);
 
 	return res == 0 ? 1 : 0;
 }
