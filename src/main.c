@@ -5,6 +5,7 @@ int main() {
 	struct oauth_t *oauth;
 	struct game_details_t *game;
 	struct download_t *download;
+	int r = 0;
 
 	curl_global_init(CURL_GLOBAL_SSL);
 	oauth = malloc(sizeof(struct oauth_t));
@@ -30,16 +31,13 @@ int main() {
 
 			create_partial_download(download, 2);
 
-			free_download(download);
+			do {
+				curl_multi_perform(download->multi, &r);
+			} while(r);
 		}
 		else
 			print_error(oauth);
-		free_game(game);
 	}
 	else
 		print_error(oauth);
-
-
-	free_message(oauth->msg);
-	free(oauth);
 }

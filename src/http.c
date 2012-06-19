@@ -6,9 +6,12 @@ size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *user
 }
 size_t static file_write_callback(void *buffer, size_t size, size_t nmemb, void *userp) {
 	struct active_t *active = (struct active_t *)userp;
+	size_t written;
+
 	if(!active->current && active->from)
 		fseek(active->file, active->from, SEEK_SET);
-	return (active->current = fwrite(buffer, size, nmemb, active->file));
+	active->current += (written = fwrite(buffer, size, nmemb, active->file));
+	return written;
 }
 off_t get_remote_file_size(char *url) {
 	CURL *curl;
@@ -69,10 +72,13 @@ int create_partial_download(struct download_t *dl, int n) {
 	length = get_remote_file_size(dl->link);
 	chunk = length / n;
 
+	dl->multi = curl_multi_init();
+
 	for(int i = 0; i < n; i++) {
 		dl->active[i].info = dl;
 		dl->active[i].from = i * chunk;
 		dl->active[i].to = (i * chunk) + chunk;
+		dl->active[i].current = 0;
 		if(dl->active[i].to + chunk >= length)
 			dl->active[i].to = length;
 		dl->active[i].chunk_size = chunk;
