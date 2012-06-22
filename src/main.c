@@ -8,9 +8,8 @@ int main() {
 	int r = 0;
 
 	curl_global_init(CURL_GLOBAL_SSL);
-	oauth = malloc(sizeof(struct oauth_t));
+	oauth = calloc(sizeof(struct oauth_t), 1);
 	download = malloc(sizeof(struct download_t));
-	oauth->token = oauth->secret = oauth->error = oauth->verifier = NULL;
 
 	gog_download_config(oauth, DEFAULT_RELEASE);
 

@@ -7,7 +7,7 @@ struct message_t *setup_handler(struct oauth_t *oauth, char *reply) {
 	oauth->msg = malloc(sizeof(struct message_t));*/
 
 	answer = json_tokener_parse(reply);
-	oauth->msg->result = strcmp(json_object_get_string(json_object_object_get(answer, "result")), "ok") == 0 ? 1 : 0;
+	oauth->msg->result = !strcmp(json_object_get_string(json_object_object_get(answer, "result")), "ok");
 	oauth->msg->timestamp = json_object_get_int(json_object_object_get(answer, "timestamp"));
 
 	json_object_put(answer);
@@ -67,7 +67,7 @@ int extract_download(const char *reply, struct download_t *out) {
 		if((tmp = json_object_object_get(file, "type")) != NULL)
 			out->type = strdup(json_object_get_string(tmp));
 		else
-			out->name = NULL;
+			out->type = NULL;
 
 		json_object_put(file);
 		json_object_put(answer);
@@ -78,7 +78,7 @@ int extract_download(const char *reply, struct download_t *out) {
 	json_object_put(answer);
 	return 0;
 }
-int receive_download_links(struct oauth_t *oauth, const char *url) {
+int receive_download_links(struct oauth_t *oauth, char *url) {
 	char *reply;
 
 	if(http_get_json(oauth, url, &reply)) {
@@ -89,6 +89,7 @@ int receive_download_links(struct oauth_t *oauth, const char *url) {
 			msg->download = malloc(sizeof(struct download_t));
 			if(extract_download(reply, msg->download)) {
 				free(reply);
+				free(url);
 				return 1;
 
 			}
@@ -96,6 +97,7 @@ int receive_download_links(struct oauth_t *oauth, const char *url) {
 	}
 	if(reply)
 		free(reply);
+	free(url);
 	return 0;
 }
 void free_message(struct message_t *msg) {
@@ -141,9 +143,8 @@ void free_download(struct download_t *download) {
 		if(download->type)
 			free(download->type);
 	}
-	if(download->active_count > 0) {
-		for(int i = 0; i < download->active_count; i++)
-			free_active(&(download->active[i]));
+	for(int i = 0; i < download->active_count; i++)
+		free_active(&(download->active + 1));
 	}
 	curl_multi_cleanup(download->multi);
 

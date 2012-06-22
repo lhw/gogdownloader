@@ -19,6 +19,7 @@
 #define LOGIN_PARAM "%s?username=%s&password=%s"
 #define TOKEN_PARAM "%s?oauth_verifier=%s"
 #define CONFIG_URL "https://api.gog.com/en/downloader2/status/%s/"
+#define CONFIG_ENTRY(a) (strdup(json_object_get_string(json_object_object_get(config_node, a))))
 #define DEFAULT_RELEASE "stable"
 
 /** parsed configuration from the gog server */
@@ -181,7 +182,7 @@ int create_partial_download(struct download_t *dl, int n);
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply);
 int extract_files(struct array_list *list, struct file_t **out);
 int extract_download(const char *reply, struct download_t *out);
-int receive_download_links(struct oauth_t *oauth, const char *url);
+int receive_download_links(struct oauth_t *oauth, char *url);
 void free_message(struct message_t *msg);
 void free_game(struct game_details_t *game);
 void free_user(struct user_details_t *user);

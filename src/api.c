@@ -219,15 +219,15 @@ int gog_download_config(struct oauth_t *oauth, const char *release) {
 		content = json_tokener_parse(reply);
 		config_node = json_object_object_get(content, "config");
 		
-		config.get_extra_link = strdup(json_object_get_string(json_object_object_get(config_node, "get_extra_link")));
-		config.get_game_details = strdup(json_object_get_string(json_object_object_get(config_node, "get_game_details")));
-		config.get_installer_link = strdup(json_object_get_string(json_object_object_get(config_node, "get_installer_link")));
-		config.get_user_details = strdup(json_object_get_string(json_object_object_get(config_node, "get_user_details")));
-		config.get_user_games = strdup(json_object_get_string(json_object_object_get(config_node, "get_user_games")));
-		config.oauth_authorize_temp_token = strdup(json_object_get_string(json_object_object_get(config_node, "oauth_authorize_temp_token")));
-		config.oauth_get_temp_token = strdup(json_object_get_string(json_object_object_get(config_node, "oauth_get_temp_token")));
-		config.oauth_get_token = strdup(json_object_get_string(json_object_object_get(config_node, "oauth_get_token")));
-		config.set_app_status = strdup(json_object_get_string(json_object_object_get(config_node, "set_app_status")));
+		config.get_extra_link = CONFIG_ENTRY("get_extra_link");
+		config.get_game_details = CONFIG_ENTRY("get_game_details");
+		config.get_installer_link = CONFIG_ENTRY("get_installer_link");
+		config.get_user_details = CONFIG_ENTRY("get_user_details");
+		config.get_user_games = CONFIG_ENTRY("get_user_games");
+		config.oauth_authorize_temp_token = CONFIG_ENTRY("oauth_authorize_temp_token");
+		config.oauth_get_temp_token = CONFIG_ENTRY("oauth_get_temp_token");
+		config.oauth_get_token = CONFIG_ENTRY("oauth_get_token");
+		config.set_app_status = CONFIG_ENTRY("set_app_status");
 
 		json_object_put(config_node);
 		json_object_put(content);
@@ -245,14 +245,7 @@ int gog_extra_link(struct oauth_t *oauth, const char *game, const short file_id)
 	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 7);
 	sprintf(extra_link_uri, "%s%s/%d/", config.get_extra_link , game, file_id);
 
-	if(receive_download_links(oauth, extra_link_uri)) {
-		free(extra_link_uri);
-		return 1;
-	}
-	else {
-		free(extra_link_uri);
-		return 0;
-	}
+	return receive_download_links(oauth, extra_link_uri);
 }
 int gog_installer_link(struct oauth_t *oauth, const char *game, const short file_id) {
 	char *installer_link_uri = NULL;
@@ -260,14 +253,7 @@ int gog_installer_link(struct oauth_t *oauth, const char *game, const short file
 	installer_link_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 7);
 	sprintf(installer_link_uri, "%s%s/%d/", config.get_installer_link , game, file_id);
 
-	if(receive_download_links(oauth, installer_link_uri)) {
-		free(installer_link_uri);
-		return 1;
-	}
-	else {
-		free(installer_link_uri);
-		return 0;
-	}
+	return receive_download_links(oauth, installer_link_uri);
 }
 int gog_installer_crc(struct oauth_t *oauth, const char *game, const short file_id) {
 	char *file_crc_uri = NULL;
@@ -275,12 +261,5 @@ int gog_installer_crc(struct oauth_t *oauth, const char *game, const short file_
 	file_crc_uri = malloc(strlen(config.get_installer_link) + strlen(game) + 8);
 	sprintf(file_crc_uri, "%s%s/%d/crc/", config.get_installer_link , game, file_id);
 
-	if(receive_download_links(oauth, file_crc_uri)) {
-		free(file_crc_uri);
-		return 1;
-	}
-	else {
-		free(file_crc_uri);
-		return 0;
-	}
+	return receive_download_links(oauth, file_crc_uri);
 }
