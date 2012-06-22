@@ -144,10 +144,10 @@ void free_download(struct download_t *download) {
 			free(download->type);
 	}
 	for(int i = 0; i < download->active_count; i++)
-		free_active(&(download->active + 1));
-	}
-	curl_multi_cleanup(download->multi);
+		free_active(&(download->active[i]));
 
+	curl_multi_cleanup(download->multi);
+	free(download);
 }
 void free_active(struct active_t *active) {
 	if(active->file)
