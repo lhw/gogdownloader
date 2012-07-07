@@ -3,8 +3,8 @@ struct message_t *setup_handler(struct oauth_t *oauth, char *reply) {
 	struct json_object *answer;
 
 	/*if(oauth->msg != NULL)
-		free_message(oauth->msg);
-	oauth->msg = malloc(sizeof(struct message_t));*/
+		free_message(oauth->msg);*/
+	oauth->msg = malloc(sizeof(struct message_t));
 
 	answer = json_tokener_parse(reply);
 	oauth->msg->result = !strcmp(json_object_get_string(json_object_object_get(answer, "result")), "ok");
