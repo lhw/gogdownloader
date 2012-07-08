@@ -108,6 +108,7 @@ int http_get(const char *url, char **buffer, char **error_msg) {
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 	curl_easy_setopt(curl, CURLOPT_URL, url);
+	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
 
 	if((res = curl_easy_perform(curl)) != 0 && error_msg != NULL) {
 		if(*error_msg && strlen(*error_msg) > 1)
