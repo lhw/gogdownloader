@@ -108,14 +108,13 @@ int http_get(const char *url, char **buffer, char **error_msg) {
 	curl_easy_setopt(curl, CURLOPT_WRITEFUNCTION, write_callback);
 	curl_easy_setopt(curl, CURLOPT_WRITEDATA, buffer);
 	curl_easy_setopt(curl, CURLOPT_URL, url);
-	curl_easy_setopt(curl, CURLOPT_SSL_VERIFYPEER, 0);
 
 	if((res = curl_easy_perform(curl)) != 0 && error_msg != NULL) {
 		if(*error_msg && strlen(*error_msg) > 1)
 			free(*error_msg);
 		*error_msg = strdup(error);
 	}
-	if(!*buffer) {
+	if(!res && !*buffer) {
 		res = 1;
 		if(error_msg != NULL) {
 			if(*error_msg && strlen(*error_msg) > 1)
@@ -125,7 +124,7 @@ int http_get(const char *url, char **buffer, char **error_msg) {
 	}
 
 	/* XXX: dirty check here. really have to change this */
-	if(*buffer[0] == '<') {
+	if(!res && *buffer[0] == '<') {
 		res = 1;
 		if(*error_msg && strlen(*error_msg) > 1)
 			free(*error_msg);

@@ -11,7 +11,10 @@ int main() {
 	oauth = calloc(sizeof(struct oauth_t), 1);
 	download = malloc(sizeof(struct download_t));
 
-	gog_download_config(oauth, DEFAULT_RELEASE);
+	if(!gog_download_config(oauth, DEFAULT_RELEASE)) {
+		print_error(oauth);
+		return 1;
+	}
 
 	if(gog_login(oauth, USERNAME, PASSWORD))
 		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);
