@@ -1,7 +1,7 @@
 message DState {
-	optional int32 available = 1;
+	optional int32 available=1;
 	optional string link=2;
-	optional string message=3;
+	optional string msg=3;
 	optional string name=4;
 	optional string type=5;
 
@@ -19,5 +19,6 @@ message DState {
 		required int64 current=3;
 		required int64 chunk_size=4;
 	}
-	repeated DActive handles=7;
+	repeated DActive actives=7;
+	required int32 active_count=8;
 }

@@ -2,8 +2,7 @@
 *.swp
 goglogin
 src/token.h
-src/*.pb-c.h
-src/*.pb-c.c
+src/generated/*
 .cproject
 .project
 .settings
