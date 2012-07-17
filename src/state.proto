@@ -1,0 +1,23 @@
+message DState {
+	optional int32 available = 1;
+	optional string link=2;
+	optional string message=3;
+	optional string name=4;
+	optional string type=5;
+
+	message DFile {
+		required int32 id=1;
+		required string name=2;
+		required string path=3;
+		required double size=4;
+	}
+	required DFile reference=6;
+
+	message DActive {
+		required int64 from=1;
+		required int64 to=2;
+		required int64 current=3;
+		required int64 chunk_size=4;
+	}
+	repeated DActive handles=7;
+}
