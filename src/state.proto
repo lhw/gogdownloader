@@ -20,5 +20,4 @@ message DState {
 		required int64 chunk_size=4;
 	}
 	repeated DActive actives=7;
-	required int32 active_count=8;
 }
