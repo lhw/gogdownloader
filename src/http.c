@@ -69,7 +69,7 @@ int create_partial_download(struct download_t *dl, int n) {
 	create = fopen(file->path+1, "w+");
 	fclose(create);
 
-	length = get_remote_file_size(dl->link);
+	dl->real_size = length = get_remote_file_size(dl->link);
 	chunk = length / n;
 
 	dl->multi = curl_multi_init();

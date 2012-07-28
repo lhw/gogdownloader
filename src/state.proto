@@ -12,6 +12,7 @@ message DState {
 		required double size=4;
 	}
 	required DFile reference=6;
+	required int64 real_size=7;
 
 	message DActive {
 		required int64 from=1;
@@ -19,6 +20,6 @@ message DState {
 		required int64 current=3;
 		required int64 chunk_size=4;
 	}
-	repeated DActive actives=7;
-	required int32 active_count=8;
+	repeated DActive actives=8;
+	required int32 active_count=9;
 }
