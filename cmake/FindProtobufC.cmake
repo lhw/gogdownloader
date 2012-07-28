@@ -29,6 +29,8 @@ find_package_handle_standard_args(libprotobuf-c DEFAULT_MSG
 	PROTOBUFC_LIBRARY PROTOBUFC_INCLUDE_DIR PROTOBUFC_COMPILER)
 mark_as_advanced(PROTOBUFC PROTOBUFC_INCLUDE_DIR PROTOBUFC_LIBRARY)
 
+#The following was adopted from the protobuf cmake function by
+#Esben Mose Hansen <esben@ange.dk>, (C) Ange Optimization ApS 2008
 function(PROTOC VAR)
 	if (NOT ARGN)
 		message(SEND_ERROR "Error: WRAP PROTO called without any proto files")
