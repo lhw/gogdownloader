@@ -1,12 +1,11 @@
 #include "gog.h"
 #include "generated/state.pb-c.h"
 
-int serialize_download(struct download_t *dl, char **out) {
+int serialize_download(struct download_t *dl, void **out) {
 	DState dstate = DSTATE__INIT;
 	DState__DFile dfile = DSTATE__DFILE__INIT;
 	DState__DActive **dactives;
 
-	void *buf = NULL;
 	unsigned len;
 
 	/* copy all the simple types */
@@ -18,10 +17,7 @@ int serialize_download(struct download_t *dl, char **out) {
 	dstate.real_size = dl->real_size;
 
 	/* copy file information */	
-	dfile.id = dl->file->id;
-	dfile.name = dl->file->name;
-	dfile.path = dl->file->path;
-	dfile.size = dl->file->size;
+	memcpy(&(dfile.id), dl->file, sizeof(struct file_t));
 
 	/* add the reference */
 	dstate.reference = &dfile;
@@ -30,17 +26,14 @@ int serialize_download(struct download_t *dl, char **out) {
 	for(int i = 0; i < dl->active_count; i++) {
 		dactives[i] = malloc(sizeof(DState__DActive));
 		dstate__dactive__init(dactives[i]);
-		dactives[i]->from = dl->active[i].from;
-		dactives[i]->to = dl->active[i].to;
-		dactives[i]->current = dl->active[i].current;
-		dactives[i]->chunk_size= dl->active[i].chunk_size;
+		memcpy(&(dactives[i]->from), &(dl->active[i]), sizeof(off_t) * 4);
 	}
 	dstate.actives = dactives;
 	dstate.n_actives = dl->active_count;
 
 	len = dstate__get_packed_size(&dstate);
-	buf = malloc(len);
-	dstate__pack(&dstate, buf);
+	*out = malloc(len);
+	dstate__pack(&dstate, *out);
 
 	for(int i = 0; i < dl->active_count; i++)
 		free(dactives[i]);
@@ -49,7 +42,7 @@ int serialize_download(struct download_t *dl, char **out) {
 	return len;
 }
 int serialize_to_file(struct download_t *dl, char *file) {
-	char *buf = NULL;
+	void *buf = NULL;
 	FILE *state_file;
 	unsigned len;
 

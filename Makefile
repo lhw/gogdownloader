@@ -5,7 +5,7 @@ GENERATED:=src/generated/state.pb-c.c
 
 all: proto goglogin
 goglogin: $(SOURCE) $(GENERATED)
-	clang -o $@ $^ `pkg-config --cflags --libs $(LIBS)` -g -Wall -Wextra
+	clang -o $@ $^ `pkg-config --cflags --libs $(LIBS)` -g -Wall -Wextra -Wno-unused-function
 proto:
 	mkdir -p src/generated
 	cd src && protoc-c --c_out=generated $(PROTOBUF)

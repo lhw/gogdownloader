@@ -112,14 +112,6 @@ struct user_details_t {
 
 /** active file download */
 struct active_t {
-	/** active file info */
-	struct download_t *info;
-
-	/** OS file handle */
-	FILE *file;
-	/** active curl handle */
-	CURL *curl;
-
 	/** original start offset */
 	off_t from;
 	/** ending offset */
@@ -128,6 +120,14 @@ struct active_t {
 	off_t current;
 	/** calculated chunk offset */
 	off_t chunk_size;
+
+	/** active file info */
+	struct download_t *info;
+
+	/** OS file handle */
+	FILE *file;
+	/** active curl handle */
+	CURL *curl;
 };
 
 /** message types */
@@ -195,7 +195,7 @@ int file_exists(char *path);
 void print_error(struct oauth_t *oauth);
 
 /* serialization.c */
-int serialize_download(struct download_t *dl, char **out);
+int serialize_download(struct download_t *dl, void **out);
 int serialize_to_file(struct download_t *dl, char *file);
 int deserialize_download(char **data, struct download_t **out);
 int deserialize_file(char *file, struct download_t **out);
