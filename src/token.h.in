@@ -1,0 +1,2 @@
+#define USERNAME "@goglogin_USERNAME@"
+#define PASSWORD "@goglogin_PASSWORD@"
