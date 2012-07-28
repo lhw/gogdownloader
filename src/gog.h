@@ -59,6 +59,8 @@ struct download_t {
 
 	/** backreference */
 	struct file_t *file;
+	/** the real size of the file in bytes */
+	off_t real_size;
 
 	/** currently active connections */
 	struct active_t *active;
@@ -76,7 +78,7 @@ struct file_t {
 	char *name;
 	/** path for the download */
 	char *path;
-	/** approximate double file size with , instead of a . */
+	/** approximate double representing the file size */
 	float size;
 };
 
@@ -110,14 +112,6 @@ struct user_details_t {
 
 /** active file download */
 struct active_t {
-	/** active file info */
-	struct download_t *info;
-
-	/** OS file handle */
-	FILE *file;
-	/** active curl handle */
-	CURL *curl;
-
 	/** original start offset */
 	off_t from;
 	/** ending offset */
@@ -126,6 +120,14 @@ struct active_t {
 	off_t current;
 	/** calculated chunk offset */
 	off_t chunk_size;
+
+	/** active file info */
+	struct download_t *info;
+
+	/** OS file handle */
+	FILE *file;
+	/** active curl handle */
+	CURL *curl;
 };
 
 /** message types */
@@ -191,6 +193,12 @@ void free_active(struct active_t *active);
 
 int file_exists(char *path);
 void print_error(struct oauth_t *oauth);
+
+/* serialization.c */
+int serialize_download(struct download_t *dl, void **out);
+int serialize_to_file(struct download_t *dl, char *file);
+int deserialize_download(void **data, struct download_t **out);
+int deserialize_file(char *file, struct download_t **out);
 
 /* api.c */
 /** \brief Downloads the gog api configuration containing all urls

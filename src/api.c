@@ -240,7 +240,7 @@ int gog_download_config(struct oauth_t *oauth, const char *release) {
 	return res;
 }
 int gog_extra_link(struct oauth_t *oauth, const char *game, const short file_id) {
-	char *reply = NULL, *extra_link_uri = NULL;
+	char *extra_link_uri = NULL;
 
 	extra_link_uri = malloc(strlen(config.get_extra_link) + strlen(game) + 7);
 	sprintf(extra_link_uri, "%s%s/%d/", config.get_extra_link , game, file_id);
