@@ -1,4 +1,5 @@
 *.o
+*.pb-c.*
 *.swp
 goglogin
 src/token.h

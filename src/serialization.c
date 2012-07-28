@@ -1,5 +1,5 @@
 #include "gog.h"
-#include "generated/state.pb-c.h"
+#include "state.pb-c.h"
 #include  <google/protobuf-c/protobuf-c.h>
 
 int serialize_download(struct download_t *dl, void **out) {

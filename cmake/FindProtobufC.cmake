@@ -1,26 +1,57 @@
-# - Try to find libprotobuf-c
+# - Try to find protobuf-c
 # Once done this will define
-#  LIBPROTOBUFC_FOUND - System has libprotobuf-c
-#  LIBPROTOBUFC_INCLUDE_DIRS - The libprotobuf-c include directories
-#  LIBPROTOBUFC_LIBRARIES - The libraries needed to use libprotobuf-c
-#  LIBPROTOBUFC_DEFINITIONS - Compiler switches required for using libprotobuf-c
+#  PROTOBUFC_FOUND - System has libprotobuf-c
+#  PROTOBUFC_INCLUDE_DIRS - The libprotobuf-c include directories
+#  PROTOBUFC_LIBRARIES - The libraries needed to use libprotobuf-c
+#  PROTOBUFC_DEFINITIONS - Compiler switches required for using libprotobuf-c
+#  PROTOBUFC_COMPILER - The protobuf-c compiler
 
 find_package(PkgConfig)
-pkg_check_modules(PC_LIBPROTOBUFC_QUIET libprotobuf-c)
-set(LIBPROTOBUFC_DEFINITIONS ${PC_LIBPROTOBUFC_CFLAGS_OTHER})
+pkg_check_modules(PC_PROTOBUFC_QUIET libprotobuf-c)
+set(PROTOBUFC_DEFINITIONS ${PC_PROTOBUFC_CFLAGS_OTHER})
 
-find_path(LIBPROTOBUFC_INCLUDE_DIR google/protobuf-c/protobuf-c.h 
-	HINTS ${PC_LIBPROTOBUFC_INCLUDEDIR} ${PC_LIBPROTOBUFC_INCLUDE_DIRS}
+find_path(PROTOBUFC_INCLUDE_DIR google/protobuf-c/protobuf-c.h 
+	HINTS ${PC_PROTOBUFC_INCLUDEDIR} ${PC_PROTOBUFC_INCLUDE_DIRS}
 	PATH_SUFFIXES libprotobuf-c)
 
-find_library(LIBPROTOBUFC_LIBRARY NAMES protobuf-c 
-	HINTS ${PC_LIBPROTOBUFC_LIBDIR}
-	${PC_LIBPROTOBUFC_LIBRARY_DIRS})
+find_library(PROTOBUFC_LIBRARY NAMES protobuf-c 
+	HINTS ${PC_PROTOBUFC_LIBDIR}
+	${PC_PROTOBUFC_LIBRARY_DIRS})
 
-set(LIBPROTOBUFC_LIBRARIES ${LIBPROTOBUFC_LIBRARY})
-set(LIBPROTOBUFC_INCLUDE_DIRS ${LIBPROTOBUFC_INCLUDE_DIR})
+find_program(PROTOCC_EXECUTABLE protoc-c)
+
+set(PROTOBUFC_LIBRARIES ${PROTOBUFC_LIBRARY})
+set(PROTOBUFC_INCLUDE_DIRS ${PROTOBUFC_INCLUDE_DIR})
+set(PROTOBUFC_COMPILER ${PROTOCC_EXECUTABLE})
 
 include(FindPackageHandleStandardArgs)
 find_package_handle_standard_args(libprotobuf-c DEFAULT_MSG
-	LIBPROTOBUFC_LIBRARY LIBPROTOBUFC_INCLUDE_DIR)
-mark_as_advanced(LIBPROTOBUFC INCLUDE_DIR LIBPROTOBUFC_LIBRARY)
+	PROTOBUFC_LIBRARY PROTOBUFC_INCLUDE_DIR PROTOBUFC_COMPILER)
+mark_as_advanced(PROTOBUFC PROTOBUFC_INCLUDE_DIR PROTOBUFC_LIBRARY)
+
+function(PROTOC VAR)
+	if (NOT ARGN)
+		message(SEND_ERROR "Error: WRAP PROTO called without any proto files")
+		return()
+	endif(NOT ARGN)
+
+	set(INCL)
+	set(${VAR})
+	foreach(FIL ${ARGN})
+		get_filename_component(ABS_FIL ${FIL} ABSOLUTE)
+		get_filename_component(FIL_WE ${FIL} NAME_WE)
+		list(APPEND ${VAR} "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb-c.c")
+		list(APPEND INCL "${CMAKE_CURRENT_BINARY_DIR}/${FIL_WE}.pb-c.h")
+
+		add_custom_command(
+			OUTPUT ${${VAR}} ${INCL}
+			COMMAND  ${PROTOBUFC_COMPILER}
+			ARGS --c_out  ${CMAKE_CURRENT_BINARY_DIR} --proto_path ${CMAKE_CURRENT_SOURCE_DIR} ${ABS_FIL}
+			DEPENDS ${ABS_FIL}
+			COMMENT "Running protocol buffer compiler on ${FIL}"
+			VERBATIM 
+	)
+	endforeach(FIL)
+
+	set(${VAR} ${${VAR}} PARENT_SCOPE)
+endfunction(PROTOC VAR)
