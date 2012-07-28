@@ -197,7 +197,7 @@ void print_error(struct oauth_t *oauth);
 /* serialization.c */
 int serialize_download(struct download_t *dl, void **out);
 int serialize_to_file(struct download_t *dl, char *file);
-int deserialize_download(char **data, struct download_t **out);
+int deserialize_download(void **data, struct download_t **out);
 int deserialize_file(char *file, struct download_t **out);
 
 /* api.c */
