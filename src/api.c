@@ -7,12 +7,12 @@ int gog_request_token(struct oauth_t *oauth) {
 	if((res = http_get_oauth(oauth, config.oauth_get_temp_token, &reply))) {
 		rc = oauth_split_url_parameters(reply, &rv);
 		qsort(rv, rc, sizeof(char *), oauth_cmpstringp);
-		if(rc == 3 && !strncmp(rv[1], "oauth_token=", 11) && !strncmp(rv[2], "oauth_token_secret=", 18)) {
+		if(rc == 3 && !strncmp(rv[1], OAUTH_TOKEN, strlen(OAUTH_TOKEN)) && !strncmp(rv[2], OAUTH_TOKEN_SECRET, strlen(OAUTH_TOKEN_SECRET))) {
 			oauth->token = malloc(KEY_LENGTH + 1);
 			oauth->secret = malloc(KEY_LENGTH + 1);
 
-			strcpy(oauth->token, rv[1]+12);
-			strcpy(oauth->secret, rv[2]+19);
+			strcpy(oauth->token, rv[1]+strlen(OAUTH_TOKEN));
+			strcpy(oauth->secret, rv[2]+strlen(OAUTH_TOKEN_SECRET));
 
 			free(rv);
 			free(reply);
@@ -44,9 +44,9 @@ int gog_access_token(struct oauth_t *oauth, const char *email, const char *passw
 	if((res = http_get_oauth(oauth, login_uri, &reply))) {
 		rc = oauth_split_url_parameters(reply, &rv);
 		qsort(rv, rc, sizeof(char *), oauth_cmpstringp);
-		if(rc == 2 && !strncmp(rv[1], "oauth_verifier=", 14)) {
+		if(rc == 2 && !strncmp(rv[1], OAUTH_VERIFIER, strlen(OAUTH_VERIFIER))) {
 			oauth->verifier = malloc(KEY_LENGTH + 1);
-			strcpy(oauth->verifier, rv[1]+15);
+			strcpy(oauth->verifier, rv[1]+strlen(OAUTH_VERIFIER));
 
 			free(rv);
 			free(reply);
@@ -73,9 +73,9 @@ int gog_token(struct oauth_t *oauth) {
 	if((res = http_get_oauth(oauth, token_uri, &reply))) {
 		rc = oauth_split_url_parameters(reply, &rv);
 		qsort(rv, rc, sizeof(char *), oauth_cmpstringp);
-		if(rc == 2 && !strncmp(rv[0], "oauth_token=", 11) && !strncmp(rv[1], "oauth_token_secret=", 18)) {
-			strcpy(oauth->token, rv[0]+12);
-			strcpy(oauth->secret, rv[1]+19);
+		if(rc == 2 && !strncmp(rv[0], OAUTH_TOKEN, strlen(OAUTH_TOKEN)) && !strncmp(rv[1], OAUTH_TOKEN_SECRET, strlen(OAUTH_TOKEN_SECRET))) {
+			strcpy(oauth->token, rv[0]+strlen(OAUTH_TOKEN));
+			strcpy(oauth->secret, rv[1]+strlen(OAUTH_TOKEN_SECRET));
 
 			free(rv);
 			free(reply);

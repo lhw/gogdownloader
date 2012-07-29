@@ -15,6 +15,9 @@
 #define CONSUMER_KEY "1f444d14ea8ec776585524a33f6ecc1c413ed4a5"
 #define CONSUMER_SECRET "20d175147f9db9a10fc0584aa128090217b9cf88"
 
+#define OAUTH_TOKEN "oauth_token="
+#define OAUTH_TOKEN_SECRET "oauth_token_secret="
+#define OAUTH_VERIFIER "oauth_verifier="
 #define KEY_LENGTH 40
 #define LOGIN_PARAM "%s?username=%s&password=%s"
 #define TOKEN_PARAM "%s?oauth_verifier=%s"
