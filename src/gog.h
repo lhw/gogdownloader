@@ -18,6 +18,7 @@
 #define OAUTH_TOKEN "oauth_token="
 #define OAUTH_TOKEN_SECRET "oauth_token_secret="
 #define OAUTH_VERIFIER "oauth_verifier="
+#define LEN(a) (sizeof(a)-1)
 #define KEY_LENGTH 40
 #define LOGIN_PARAM "%s?username=%s&password=%s"
 #define TOKEN_PARAM "%s?oauth_verifier=%s"
