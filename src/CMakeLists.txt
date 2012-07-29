@@ -8,23 +8,15 @@ set(LIBS ${LIBS} ${PROTOBUFC_LIBRARIES} ${LIBJSON_LIBRARIES} ${LIBOAUTH_LIBRARIE
 
 add_definitions(-std=c99 -g -O0)
 
-if(USERNAME AND PASSWORD)
-	set(goglogin_USERNAME ${USERNAME})
-	set(goglogin_PASSWORD ${PASSWORD})
-else(USERNAME AND PASSWORD)
-	message(SEND_ERROR "USERNAME and PASSWORD not defined")
-endif(USERNAME AND PASSWORD)
-
-configure_file ("token.h.in" "token.h")
-
 set(GOG_SRC gog.h
 				main.c
 				api.c
 				http.c
 				util.c
 				serialization.c
+				config.c
 )
-protoc(PROTO_SRC state.proto)
+protoc(PROTO_SRC state.proto config.proto)
 add_executable(goglogin ${GOG_SRC} ${PROTO_SRC})
 target_link_libraries(goglogin ${LIBS})
 

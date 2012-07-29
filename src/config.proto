@@ -1,0 +1,5 @@
+message Config {
+	optional string token=1;
+	optional string secret=2;
+	optional string download_path=3;
+}
