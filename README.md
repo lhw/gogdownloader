@@ -2,8 +2,10 @@ Building Instructions
 ================================
 
 Currently the application can be compiled via cmake and make like this:
+
     cmake -DUSERNAME=foobar@foo.bar -DPASSWORD=foobar .
     make
+    
 Which will produce a single binary called `goglogin` in src/
 On the most recent debian and ubuntu versions the build might fail because
 it cannot find libprotobuf-c. The maintainer does not provide the package
