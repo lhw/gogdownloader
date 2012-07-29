@@ -1,10 +1,10 @@
 #Configure to your liking
-SET(CMAKE_C_COMPILER clang)
-SET(CMAKE_BUILD_TYPE DEBUG)
+set(CMAKE_C_COMPILER clang)
+set(CMAKE_BUILD_TYPE DEBUG)
 
-CMAKE_MINIMUM_REQUIRED(VERSION 2.6)
-PROJECT(gogdownloader)
+cmake_minimum_required(VERSION 2.6)
+project(gogdownloader)
 
-SET(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
+set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} ${PROJECT_SOURCE_DIR}/cmake/)
 
-ADD_SUBDIRECTORY(src)
+add_subdirectory(src)
