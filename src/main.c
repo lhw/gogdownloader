@@ -1,5 +1,4 @@
 #include "gog.h"
-#include "token.h"
 
 int main() {
 	struct oauth_t *oauth;
@@ -11,19 +10,17 @@ int main() {
 	oauth = calloc(sizeof(struct oauth_t), 1);
 	download = malloc(sizeof(struct download_t));
 
+	if(!load_config("foo.pbf")) {
+		return 1;
+	}
+
 	if(!gog_download_config(oauth, DEFAULT_RELEASE)) {
 		print_error(oauth);
 		return 1;
 	}
 
-	if(gog_login(oauth, USERNAME, PASSWORD))
-		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);
-	else
-		print_error(oauth);
-#if 0
-	oauth->token = TOKEN;
-	oauth->secret = SECRET;
-#endif
+	oauth->token = config.token;
+	oauth->secret = config.secret;
 
 	if(gog_game_details(oauth, "beneath_a_steel_sky")) {
 		game = oauth->msg->game;

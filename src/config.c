@@ -7,7 +7,7 @@ int load_config(char *path) {
 	off_t len;
 	void *buf;
 
-	if(cfg_file = fopen(path, "r")) {
+	if((cfg_file = fopen(path, "r"))) {
 		fseek(cfg_file, 0, SEEK_END);
 		len = ftell(cfg_file);
 		buf = malloc(len);
@@ -15,7 +15,7 @@ int load_config(char *path) {
 		fread(buf, len, 1, cfg_file);
 		cfg = config__unpack(NULL, len, buf);
 
-		flcose(cfg_file);
+		fclose(cfg_file);
 		free(buf);
 	
 		config.token = strdup(cfg->token);
@@ -34,7 +34,7 @@ int save_config(char *path) {
 	void *buf;
 	off_t len;
 
-	if(cfg_file = fopen(path, "w+")) {
+	if((cfg_file = fopen(path, "w+"))) {
 		cfg.token = &config.token;
 		cfg.secret = &config.secret;
 		cfg.download_path = &config.download_path;
