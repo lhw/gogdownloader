@@ -7,12 +7,12 @@ int gog_request_token(struct oauth_t *oauth) {
 	if((res = http_get_oauth(oauth, config.oauth_get_temp_token, &reply))) {
 		rc = oauth_split_url_parameters(reply, &rv);
 		qsort(rv, rc, sizeof(char *), oauth_cmpstringp);
-		if(rc == 3 && !strncmp(rv[1], OAUTH_TOKEN, strlen(OAUTH_TOKEN)) && !strncmp(rv[2], OAUTH_TOKEN_SECRET, strlen(OAUTH_TOKEN_SECRET))) {
+		if(rc == 3 && !strncmp(rv[1], OAUTH_TOKEN, LEN(OAUTH_TOKEN)-1) && !strncmp(rv[2], OAUTH_TOKEN_SECRET, LEN(OAUTH_TOKEN_SECRET)-1)) {
 			oauth->token = malloc(KEY_LENGTH + 1);
 			oauth->secret = malloc(KEY_LENGTH + 1);
 
-			strcpy(oauth->token, rv[1]+strlen(OAUTH_TOKEN));
-			strcpy(oauth->secret, rv[2]+strlen(OAUTH_TOKEN_SECRET));
+			strcpy(oauth->token, rv[1]+LEN(OAUTH_TOKEN));
+			strcpy(oauth->secret, rv[2]+LEN(OAUTH_TOKEN_SECRET));
 
 			free(rv);
 			free(reply);
@@ -35,7 +35,7 @@ int gog_access_token(struct oauth_t *oauth, const char *email, const char *passw
 	user_enc = oauth_url_escape(email);
 	password_enc = oauth_url_escape(password);
 
-	login_uri = malloc(strlen(LOGIN_PARAM) - 6 + strlen(config.oauth_authorize_temp_token) + strlen(user_enc) + strlen(password_enc));
+	login_uri = malloc(sizeof(LOGIN_PARAM) - 6 + strlen(config.oauth_authorize_temp_token) + strlen(user_enc) + strlen(password_enc));
 	sprintf(login_uri, LOGIN_PARAM, config.oauth_authorize_temp_token, user_enc, password_enc);
 
 	free(user_enc);
@@ -44,9 +44,9 @@ int gog_access_token(struct oauth_t *oauth, const char *email, const char *passw
 	if((res = http_get_oauth(oauth, login_uri, &reply))) {
 		rc = oauth_split_url_parameters(reply, &rv);
 		qsort(rv, rc, sizeof(char *), oauth_cmpstringp);
-		if(rc == 2 && !strncmp(rv[1], OAUTH_VERIFIER, strlen(OAUTH_VERIFIER))) {
+		if(rc == 2 && !strncmp(rv[1], OAUTH_VERIFIER, LEN(OAUTH_VERIFIER)-1)) {
 			oauth->verifier = malloc(KEY_LENGTH + 1);
-			strcpy(oauth->verifier, rv[1]+strlen(OAUTH_VERIFIER));
+			strcpy(oauth->verifier, rv[1]+LEN(OAUTH_VERIFIER));
 
 			free(rv);
 			free(reply);
@@ -67,15 +67,15 @@ int gog_token(struct oauth_t *oauth) {
 	char *reply = NULL, **rv = NULL, *token_uri = NULL;
 	int res, rc;
 
-	token_uri = malloc(strlen(TOKEN_PARAM) - 4 + strlen(config.oauth_get_token) + KEY_LENGTH);
+	token_uri = malloc(LEN(TOKEN_PARAM) - 4 + strlen(config.oauth_get_token) + KEY_LENGTH);
 	sprintf(token_uri, TOKEN_PARAM, config.oauth_get_token, oauth->verifier);
 
 	if((res = http_get_oauth(oauth, token_uri, &reply))) {
 		rc = oauth_split_url_parameters(reply, &rv);
 		qsort(rv, rc, sizeof(char *), oauth_cmpstringp);
-		if(rc == 2 && !strncmp(rv[0], OAUTH_TOKEN, strlen(OAUTH_TOKEN)) && !strncmp(rv[1], OAUTH_TOKEN_SECRET, strlen(OAUTH_TOKEN_SECRET))) {
-			strcpy(oauth->token, rv[0]+strlen(OAUTH_TOKEN));
-			strcpy(oauth->secret, rv[1]+strlen(OAUTH_TOKEN_SECRET));
+		if(rc == 2 && !strncmp(rv[0], OAUTH_TOKEN, LEN(OAUTH_TOKEN)) && !strncmp(rv[1], OAUTH_TOKEN_SECRET, LEN(OAUTH_TOKEN_SECRET)-1)) {
+			strcpy(oauth->token, rv[0]+LEN(OAUTH_TOKEN));
+			strcpy(oauth->secret, rv[1]+LEN(OAUTH_TOKEN_SECRET));
 
 			free(rv);
 			free(reply);
@@ -212,7 +212,7 @@ int gog_download_config(struct oauth_t *oauth, const char *release) {
 	struct json_object *content, *config_node;
 	int res;
 
-	release_url = malloc(strlen(CONFIG_URL) - 2 + strlen(release));
+	release_url = malloc(LEN(CONFIG_URL) - 2 + strlen(release));
 	sprintf(release_url, CONFIG_URL, release);
 
 	if((res = http_get(release_url, &reply, &(oauth->error)))) {
