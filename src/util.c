@@ -37,8 +37,7 @@ int extract_files(struct array_list *list, struct file_t **out) {
 				*comma = '.';
 			(*out)[i].size = strtof(size, NULL);
 			free(size);
-
-			json_object_put(item);
+			//json_object_put(item);
 		}
 		return len;
 	}
@@ -74,7 +73,7 @@ int extract_download(const char *reply, struct download_t *out) {
 		
 		return 1;
 	}
-	json_object_put(file);
+//	json_object_put(file);
 	json_object_put(answer);
 	return 0;
 }
