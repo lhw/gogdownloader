@@ -16,8 +16,9 @@ set(GOG_SRC gog.h
 				serialization.c
 				config.c
 )
-protoc(PROTO_SRC state.proto config.proto)
-add_executable(goglogin ${GOG_SRC} ${PROTO_SRC})
+protoc(STATE_SRC state.proto)
+protoc(CONFIG_SRC config.proto)
+add_executable(goglogin ${GOG_SRC} ${STATE_SRC} ${CONFIG_SRC})
 target_link_libraries(goglogin ${LIBS})
 
 install(TARGETS goglogin DESTINATION bin)

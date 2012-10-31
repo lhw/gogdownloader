@@ -1,6 +1,7 @@
 *.o
 *.pb-c.*
 *.swp
+*.pbf
 goglogin
 src/token.h
 src/generated/*

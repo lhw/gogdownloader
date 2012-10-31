@@ -53,6 +53,7 @@ function(PROTOC VAR)
 			COMMENT "Running protocol buffer compiler on ${FIL}"
 			VERBATIM 
 		)
+		set_source_files_properties(${${VAR}} ${INCL} PROPERTIES GENERATED TRUE)
 	endforeach(FIL)
 
 	set(${VAR} ${${VAR}} PARENT_SCOPE)

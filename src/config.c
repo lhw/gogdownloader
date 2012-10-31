@@ -1,13 +1,13 @@
 #include "gog.h"
 #include "config.pb-c.h"
 
-int load_config(char *path) {
+int load_config() {
 	FILE *cfg_file;
 	Config *cfg;
 	off_t len;
 	void *buf;
 
-	if((cfg_file = fopen(path, "r"))) {
+	if((cfg_file = fopen(config.config_file, "r"))) {
 		fseek(cfg_file, 0, SEEK_END);
 		len = ftell(cfg_file);
 		buf = malloc(len);
@@ -28,16 +28,16 @@ int load_config(char *path) {
 	}
 	return 0;
 }
-int save_config(char *path) {
+int save_config() {
 	FILE *cfg_file;
-	Config cfg = INIT__CONFIG;
+	Config cfg = CONFIG__INIT;
 	void *buf;
 	off_t len;
 
-	if((cfg_file = fopen(path, "w+"))) {
-		cfg.token = &config.token;
-		cfg.secret = &config.secret;
-		cfg.download_path = &config.download_path;
+	if((cfg_file = fopen(config.config_file, "w+"))) {
+		cfg.token = config.token;
+		cfg.secret = config.secret;
+		cfg.download_path = config.download_path;
 
 		len = config__get_packed_size(&cfg);
 		buf = malloc(len);

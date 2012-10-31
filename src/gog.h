@@ -214,8 +214,8 @@ int deserialize_download(void **data, struct download_t **out);
 int deserialize_file(char *file, struct download_t **out);
 
 /* config.c */
-int load_config(char *path);
-int save_config(char *path);
+int load_config();
+int save_config();
 
 /* api.c */
 /** \brief Downloads the gog api configuration containing all urls
