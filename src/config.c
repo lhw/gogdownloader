@@ -58,7 +58,7 @@ int save_config() {
 	}
 	return 0;
 }
-static char *config_file_path() {
+char *config_file_path() {
 	char *config_file, *home_dir, *xdg_config_dir;
 
 	home_dir = getenv("HOME");
@@ -80,7 +80,7 @@ static char *config_file_path() {
 
 	return config_file;
 }
-static char *xdg_user_dir_lookup(const char *type) {
+char *xdg_user_dir_lookup(char *type) {
 	FILE *file;
 	char *home_dir, *config_home, *config_file;
 	char buffer[512];

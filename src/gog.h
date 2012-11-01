@@ -223,8 +223,8 @@ int save_config();
 /**
   * \copyright Alexander Larsson <alexl@redhat.com>
   */
-static char *xdg_user_dir_lookup(const char *type);
-static char *config_file_path();
+char *xdg_user_dir_lookup(char *type);
+char *config_file_path();
 
 /* api.c */
 /** \brief Downloads the gog api configuration containing all urls
