@@ -7,6 +7,8 @@ int load_config() {
 	off_t len;
 	void *buf;
 
+	create_config_dirs();
+
 	if(config.config_file == NULL)
 		config.config_file = DEFAULT_CONFIG_FILE;
 
@@ -37,6 +39,8 @@ int save_config() {
 	void *buf;
 	off_t len;
 
+	create_config_dirs();
+
 	if(config.config_file == NULL)
 		config.config_file = DEFAULT_CONFIG_FILE;
 
@@ -58,8 +62,26 @@ int save_config() {
 	}
 	return 0;
 }
-char *config_file_path() {
-	char *config_file, *home_dir, *xdg_config_dir;
+void create_config_dirs() {
+	char *xdg_config_dir, *config_file, *config_dir;
+	struct stat st;
+
+	xdg_config_dir = XDG_CONFIG_HOME;
+	config_file = DEFAULT_CONFIG_FILE;
+	config_dir = DEFAULT_CONFIG_DIR;
+
+	if(stat(xdg_config_dir, &st) == -1) {
+		if(errno & ENOENT)
+			mkdir(xdg_config_dir, 0755);
+	}
+	
+	if(stat(config_dir, &st) == -1) {
+		if(errno & ENOENT)
+			mkdir(config_dir, 0700);
+	}
+}
+char *xdg_config_home() {
+	char *home_dir, *xdg_config_dir;
 
 	home_dir = getenv("HOME");
 
@@ -68,15 +90,32 @@ char *config_file_path() {
 
 	xdg_config_dir = getenv("XDG_CONFIG_HOME");
 	if(xdg_config_dir == NULL || xdg_config_dir[0] == 0) {
-		xdg_config_dir = malloc(strlen(home_dir) + strlen("/.config") + 1);
+		xdg_config_dir = malloc(strlen(home_dir) + strlen("/.config/") + 1);
 		strcpy(xdg_config_dir, home_dir);
-		strcat(xdg_config_dir, "/.config");
+		strcat(xdg_config_dir, strdup("/.config/"));
 	}
+	return xdg_config_dir;
+}
+char *config_dir_path() {
+	char *config_dir, *xdg_config_dir;
 
-	config_file = malloc(strlen(xdg_config_dir) + strlen("gogdownloader/config.pbf") + 1);
-	strcpy(config_file, xdg_config_dir);
-	strcat(config_file, strdup("gogdownloader/config.pbf"));
-	free(xdg_config_dir);
+	xdg_config_dir = XDG_CONFIG_HOME;
+	config_dir = malloc(strlen(xdg_config_dir) + strlen("gogdownloaderi/") + 1);
+	strcpy(config_dir, xdg_config_dir);
+	strcat(config_dir, strdup("gogdownloader/"));
+
+	return config_dir;
+
+}
+char *config_file_path() {
+	char *config_file, *config_dir;
+
+	config_dir = DEFAULT_CONFIG_DIR;
+
+	config_file = malloc(strlen(config_dir) + strlen("config.pbf") + 1);
+	strcpy(config_file, config_dir);
+	strcat(config_file, strdup("config.pbf"));
+	free(config_dir);
 
 	return config_file;
 }

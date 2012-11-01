@@ -26,7 +26,9 @@
 #define CONFIG_ENTRY(a) (strdup(json_object_get_string(json_object_object_get(config_node, a))))
 #define DEFAULT_RELEASE "stable"
 
+#define DEFAULT_CONFIG_DIR (config_dir_path())
 #define DEFAULT_CONFIG_FILE (config_file_path())
+#define XDG_CONFIG_HOME (xdg_config_home())
 #define XDG_DOWNLOAD_DIR (xdg_user_dir_lookup("DOWNLOAD"))
 #define XDG_DESKTOP_DIR (xdg_user_dir_lookup("DESKTOP"))
 
@@ -223,8 +225,11 @@ int save_config();
 /**
   * \copyright Alexander Larsson <alexl@redhat.com>
   */
+char *xdg_config_home();
 char *xdg_user_dir_lookup(char *type);
+char *config_dir_path();
 char *config_file_path();
+void create_config_dirs();
 
 /* api.c */
 /** \brief Downloads the gog api configuration containing all urls

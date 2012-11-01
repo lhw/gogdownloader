@@ -20,10 +20,10 @@ int main() {
 		}
 	}
 
-	if(!gog_download_config(oauth, DEFAULT_RELEASE)) {
+	/*if(!gog_download_config(oauth, DEFAULT_RELEASE)) {
 		print_error(oauth);
 		return 1;
-	}
+	}*/
 
 	while(config.token == NULL || config.secret == NULL) {
 		char email[255], password[255];
@@ -49,6 +49,8 @@ int main() {
 			config.token = oauth->token;
 			config.secret = oauth->secret;
 		}
+		else
+			print_error(oauth);
 	}
 
 	if(gog_game_details(oauth, "beneath_a_steel_sky")) {
