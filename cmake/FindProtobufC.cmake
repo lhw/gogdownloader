@@ -33,7 +33,7 @@ mark_as_advanced(PROTOBUFC PROTOBUFC_INCLUDE_DIR PROTOBUFC_LIBRARY)
 #Esben Mose Hansen <esben@ange.dk>, (C) Ange Optimization ApS 2008
 function(PROTOC VAR)
 	if (NOT ARGN)
-		message(SEND_ERROR "Error: WRAP PROTO called without any proto files")
+		message(SEND_ERROR "Error: PROTOC called without any proto files")
 		return()
 	endif(NOT ARGN)
 
@@ -52,7 +52,8 @@ function(PROTOC VAR)
 			DEPENDS ${ABS_FIL}
 			COMMENT "Running protocol buffer compiler on ${FIL}"
 			VERBATIM 
-	)
+		)
+		set_source_files_properties(${${VAR}} ${INCL} PROPERTIES GENERATED TRUE)
 	endforeach(FIL)
 
 	set(${VAR} ${${VAR}} PARENT_SCOPE)

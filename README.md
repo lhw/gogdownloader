@@ -3,7 +3,7 @@ Building Instructions
 
 Currently the application can be compiled via cmake and make like this:
 
-    cmake -DUSERNAME=foobar@foo.bar -DPASSWORD=foobar .
+    cmake .
     make
     
 Which will produce a single binary called `goglogin` in src/

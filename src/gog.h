@@ -26,6 +26,10 @@
 #define CONFIG_ENTRY(a) (strdup(json_object_get_string(json_object_object_get(config_node, a))))
 #define DEFAULT_RELEASE "stable"
 
+#define DEFAULT_CONFIG_FILE (config_file_path())
+#define XDG_DOWNLOAD_DIR (xdg_user_dir_lookup("DOWNLOAD"))
+#define XDG_DESKTOP_DIR (xdg_user_dir_lookup("DESKTOP"))
+
 /** parsed configuration from the gog server */
 struct config_t {
 	/** used in gog_request_token */ 
@@ -46,6 +50,15 @@ struct config_t {
 	char *get_extra_link;
 	/** no idea what this is. not implemented */
 	char *set_app_status;
+
+	/** path to the config file */
+	char *config_file;
+	/** the token generated during the login process */
+	char *token;
+	/** the secret generated during the login process */
+	char *secret;
+	/** user defined download path */
+	char *download_path;
 } config;
 
 /** struct containing download information */
@@ -203,6 +216,15 @@ int serialize_download(struct download_t *dl, void **out);
 int serialize_to_file(struct download_t *dl, char *file);
 int deserialize_download(void **data, struct download_t **out);
 int deserialize_file(char *file, struct download_t **out);
+
+/* config.c */
+int load_config();
+int save_config();
+/**
+  * \copyright Alexander Larsson <alexl@redhat.com>
+  */
+char *xdg_user_dir_lookup(char *type);
+char *config_file_path();
 
 /* api.c */
 /** \brief Downloads the gog api configuration containing all urls

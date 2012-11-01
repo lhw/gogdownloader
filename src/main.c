@@ -1,5 +1,7 @@
 #include "gog.h"
-#include "token.h"
+
+#include <termios.h>
+#include <unistd.h>
 
 int main() {
 	struct oauth_t *oauth;
@@ -11,19 +13,43 @@ int main() {
 	oauth = calloc(sizeof(struct oauth_t), 1);
 	download = malloc(sizeof(struct download_t));
 
+	if(!load_config()) {
+		if(config.download_path == NULL) {
+			config.download_path = XDG_DOWNLOAD_DIR;
+			save_config();
+		}
+	}
+
 	if(!gog_download_config(oauth, DEFAULT_RELEASE)) {
 		print_error(oauth);
 		return 1;
 	}
 
-	if(gog_login(oauth, USERNAME, PASSWORD))
-		printf("Token: %s\nSecret: %s\n", oauth->token, oauth->secret);
-	else
-		print_error(oauth);
-#if 0
-	oauth->token = TOKEN;
-	oauth->secret = SECRET;
-#endif
+	while(config.token == NULL || config.secret == NULL) {
+		char email[255], password[255];
+		char c;
+		int i;
+
+		struct termios tty;
+		 tcgetattr(STDIN_FILENO, &tty);
+
+		puts("E-Mail: ");
+		while((c = getchar()) != '\n' && c != EOF && i < 255)
+			email[i++] = c;
+
+		puts("Password: ");
+		tty.c_lflag &= ~ECHO;
+		tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+		while((c = getchar()) != '\n' && c != EOF && i < 255)
+			password[i++] = c;
+		tty.c_lflag |= ECHO;
+		tcsetattr(STDIN_FILENO, TCSANOW, &tty);
+
+		if(gog_login(oauth, email, password)) {
+			config.token = oauth->token;
+			config.secret = oauth->secret;
+		}
+	}
 
 	if(gog_game_details(oauth, "beneath_a_steel_sky")) {
 		game = oauth->msg->game;
