@@ -1,4 +1,9 @@
 #include "gog.h"
+
+#include <termios.h>
+#include <unistd.h>
+#include <stdio.h>
+
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply) {
 	struct json_object *answer;
 
@@ -167,4 +172,57 @@ int file_exists(char *path) {
 void print_error(struct oauth_t *oauth) {
 	if(oauth->error && strlen(oauth->error) > 1)
 		printf("ERROR: %s\n", oauth->error);
+}
+size_t get_string(char *buf, size_t max_len) {
+	int nread = 0;
+	char c;
+
+	while((c = getchar()) != '\n' && nread + 1 < max_len) {
+		if(c == 127) {
+			if(nread > 0) {
+				nread--;
+				printf("\b \b");
+			}
+		} 
+		else {
+			buf[nread++] = c;
+		}
+	}
+	buf[nread] = '\0';
+
+	return nread;
+}
+size_t get_password(char *buf, size_t max_len) {
+	struct termios old, new;
+	int nread = 0;
+	char c;
+
+	/* Turn echoing off and fail if we can't. */
+	if(tcgetattr(fileno(stdin), &old) != 0)
+		return -1;
+
+	new = old;
+	new.c_lflag &= ~(ECHO | ECHOE | ECHOK | ECHONL | ICANON);
+
+	if(tcsetattr(fileno(stdin), TCSAFLUSH, &new) != 0)
+		return -1;
+
+	/* Read the password. */
+	while((c = getchar()) != '\n' && nread + 1 < max_len) {
+		if(c == 127) {
+			if(nread > 0) {
+				nread--;
+				printf("\b \b");
+			}
+		} 
+		else {
+			buf[nread++] = c;
+			printf("*");
+		}
+	}
+	buf[nread] = '\0';
+
+	/* Restore terminal. */
+	tcsetattr(fileno(stdin), TCSAFLUSH, &old);	
+	return nread;
 }

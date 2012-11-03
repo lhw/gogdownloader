@@ -209,6 +209,12 @@ void free_game(struct game_details_t *game);
 void free_user(struct user_details_t *user);
 void free_download(struct download_t *download);
 void free_active(struct active_t *active);
+size_t get_string(char *buf, size_t max_len);
+/* 
+ * \copyright WW, ruy_lopez 
+ * http://ubuntuforums.org/showthread.php?t=464934
+ */
+size_t get_password(char *buf, size_t max_len);
 
 int file_exists(char *path);
 void print_error(struct oauth_t *oauth);

@@ -15,16 +15,19 @@ int load_config() {
 	if((cfg_file = fopen(config.config_file, "r"))) {
 		fseek(cfg_file, 0, SEEK_END);
 		len = ftell(cfg_file);
+		rewind(cfg_file);
 		buf = malloc(len);
 
-		fread(buf, len, 1, cfg_file);
+		fread(buf, 1, len, cfg_file);
 		cfg = config__unpack(NULL, len, buf);
 
 		fclose(cfg_file);
 		free(buf);
 	
-		config.token = strdup(cfg->token);
-		config.secret = strdup(cfg->secret);
+		if(cfg->token)
+			config.token = strdup(cfg->token);
+		if(cfg->secret)
+			config.secret = strdup(cfg->secret);
 		config.download_path = strdup(cfg->download_path);
 
 		config__free_unpacked(cfg, NULL);
