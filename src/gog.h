@@ -1,16 +1,12 @@
 #ifndef __GOG__
 #define __GOG__
 
-#include<string.h>
-#include<stdio.h>
-#include<stdlib.h>
-#include<oauth.h>
-#include<errno.h>
-#include<sys/stat.h>
-#include<sys/types.h>
+#include <stdlib.h>
+#include <oauth.h>
+#include <sys/types.h>
 
-#include<curl/curl.h>
-#include<json/json.h>
+#include <curl/curl.h>
+#include <json/json.h>
 
 #define CONSUMER_KEY "1f444d14ea8ec776585524a33f6ecc1c413ed4a5"
 #define CONSUMER_SECRET "20d175147f9db9a10fc0584aa128090217b9cf88"
@@ -215,7 +211,6 @@ size_t get_string(char *buf, size_t max_len);
  * http://ubuntuforums.org/showthread.php?t=464934
  */
 size_t get_password(char *buf, size_t max_len);
-
 int file_exists(char *path);
 void print_error(struct oauth_t *oauth);
 
@@ -228,14 +223,14 @@ int deserialize_file(char *file, struct download_t **out);
 /* config.c */
 int load_config();
 int save_config();
-/**
-  * \copyright Alexander Larsson <alexl@redhat.com>
-  */
-char *xdg_config_home();
-char *xdg_user_dir_lookup(char *type);
 char *config_dir_path();
 char *config_file_path();
 void create_config_dirs();
+char *xdg_config_home();
+
+/* xdg-user-dir-lookup.c */
+char *xdg_user_dir_lookup_with_fallback(const char *type, const char *fallback);
+char *xdg_user_dir_lookup(const char *type);
 
 /* api.c */
 /** \brief Downloads the gog api configuration containing all urls

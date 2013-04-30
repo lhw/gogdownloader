@@ -3,6 +3,10 @@
 #include <termios.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <string.h>
+
+#include <curl/curl.h>
+#include <json/json.h>
 
 struct message_t *setup_handler(struct oauth_t *oauth, char *reply) {
 	struct json_object *answer;

@@ -6,7 +6,7 @@ find_package(OAuth REQUIRED)
 include_directories(${PROTOBUFC_INCLUDE_DIRS} ${CURL_INCLUDE_DIRS} ${LIBJSON_INCLUDE_DIRS} ${LIBOAUTH_INCLUDE_DIRS})
 set(LIBS ${LIBS} ${PROTOBUFC_LIBRARIES} ${LIBJSON_LIBRARIES} ${LIBOAUTH_LIBRARIES} ${CURL_LIBRARIES})
 
-add_definitions(-std=c99 -g -O0)
+add_definitions(-g -O0)
 
 set(GOG_SRC gog.h
 				main.c
@@ -15,6 +15,7 @@ set(GOG_SRC gog.h
 				util.c
 				serialization.c
 				config.c
+				xdg-user-dir-lookup.c
 )
 protoc(STATE_SRC state.proto)
 protoc(CONFIG_SRC config.proto)

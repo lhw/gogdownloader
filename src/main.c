@@ -28,10 +28,10 @@ int main() {
 		int i;
 
 		printf("E-Mail: ");
-		get_string(&email, sizeof(email));
+		get_string(email, sizeof(email));
 
 		printf("Password: ");
-		get_password(&password, sizeof(password));
+		get_password(password, sizeof(password));
 
 		if(gog_login(oauth, email, password)) {
 			config.token = oauth->token;
@@ -45,7 +45,7 @@ int main() {
 	char title[512];
 
 	printf("Download: ");
-	get_string(&title, sizeof(title));
+	get_string(title, sizeof(title));
 
 	if(gog_game_details(oauth, title)) {
 		game = oauth->msg->game;

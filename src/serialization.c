@@ -1,6 +1,8 @@
+#include <string.h>
+#include <google/protobuf-c/protobuf-c.h>
+
 #include "gog.h"
 #include "state.pb-c.h"
-#include  <google/protobuf-c/protobuf-c.h>
 
 int serialize_download(struct download_t *dl, void **out) {
 	DState dstate = DSTATE__INIT;

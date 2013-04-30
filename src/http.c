@@ -1,4 +1,12 @@
+#include <stdlib.h>
+#include <string.h>
+#include <errno.h>
+#include <sys/stat.h>
+#include <curl/curl.h>
+#include <json/json.h>
+
 #include "gog.h"
+
 size_t static write_callback(void *buffer, size_t size, size_t nmemb, void *userp) {
 	char **response_ptr =  (char**)userp;
 	*response_ptr = strndup(buffer, (size_t)(size *nmemb));

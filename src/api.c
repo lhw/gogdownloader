@@ -1,3 +1,5 @@
+#include <string.h>
+#include <json/json.h>
 #include "gog.h"
 
 int gog_request_token(struct oauth_t *oauth) {
