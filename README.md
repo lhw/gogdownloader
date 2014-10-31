@@ -1,3 +1,8 @@
+Not actively maintained
+================================
+There is another implementation of the API by sude https://github.com/Sude-/lgogdownloader which should be working
+unlike this one.
+
 Building Instructions
 ================================
 
